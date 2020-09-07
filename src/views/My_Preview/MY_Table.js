@@ -8,7 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import PropTypes from "prop-types";
-import MY_Tmap from "../../components/MY_Tmap";
+import MY_Tmap, {pr_3857, pr_4326} from "../../components/MY_Tmap";
 
 const useStyles = makeStyles({
   root: {
@@ -21,8 +21,13 @@ const useStyles = makeStyles({
 });
 
 
-export default function CustomerTable({orders}) {
+export default function CustomerTable({orders, map}) {
   const classes = useStyles();
+
+  const moveTo = (lon, lat) => {
+        map.setCenter(new window.Tmap.LonLat(lon, lat).transform(pr_4326, pr_3857), 16);
+  }
+
 
   return (
     <TableContainer component={Paper} className={classes.root}>
@@ -43,7 +48,7 @@ export default function CustomerTable({orders}) {
                 </TableCell>
               </TableRow>
 
-              <TableRow className={classes.tableRows} hover onClick={() => alert('좌표이동')}>
+              <TableRow className={classes.tableRows} hover onClick={() => moveTo(order.lon, order.lat)}>
                 <TableCell align="center">
                   {order.id}
                 </TableCell>
@@ -59,5 +64,6 @@ export default function CustomerTable({orders}) {
 }
 
 CustomerTable.propTypes = {
-  orders: PropTypes.array
+  orders: PropTypes.array,
+  map: PropTypes.object,
 };

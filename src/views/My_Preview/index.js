@@ -30,6 +30,7 @@ function Preview() {
   const history = useHistory();
   const dispatch = useDispatch();
   const [orderData, setOrderData] = useState([]);
+  const [map, setMap] = useState(null);
 
   const fetchOrderData = () => {
     dispatch(isloading(true));
@@ -59,6 +60,15 @@ function Preview() {
     fetchOrderData();
   }, []);
 
+  useEffect(() => {
+    setMap(new window.Tmap.Map({
+      div: "myTmap",
+      height: '750px',
+      transitionEffect: "resize",
+      animation: true
+    }));
+  }, []);
+
   return (
     <Page
       className={classes.root}
@@ -75,10 +85,10 @@ function Preview() {
         <Grid container spacing={1}>
           <Grid item xs={12} lg={9}>
             {/* eslint-disable-next-line react/jsx-pascal-case */}
-            <MY_Tmap orders={orderData} />
+            <MY_Tmap orders={orderData} map={map}/>
           </Grid>
           <Grid item xs={12} lg={3}>
-            <CustomerTable orders={orderData} />
+            <CustomerTable orders={orderData} map={map} />
           </Grid>
         </Grid>
       </Container>

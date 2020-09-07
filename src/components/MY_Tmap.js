@@ -30,12 +30,15 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-function MY_Tmap({orders}) {
+export const pr_3857 = new window.Tmap.Projection("EPSG:3857");
+export const pr_4326 = new window.Tmap.Projection("EPSG:4326");
+
+function MY_Tmap({orders, map}) {
   const classes = useStyles();
-  const [Tmap, _] = useState(window.Tmap);
-  const [map, setMap] = useState(null);
-  const pr_3857 = new window.Tmap.Projection("EPSG:3857");
-  const pr_4326 = new window.Tmap.Projection("EPSG:4326");
+  // const [window.Tmap, _] = useState(window.Tmap);
+  // const [map, setMap] = useState(null);
+  // const pr_3857 = new window.Tmap.Projection("EPSG:3857");
+  // const pr_4326 = new window.Tmap.Projection("EPSG:4326");
   const startLon = 128.539506;
   const startLat = 35.929894;
 
@@ -48,44 +51,35 @@ function MY_Tmap({orders}) {
   };
 
   const drawMarker = (lon, lat, order) => {
-    const markers = new Tmap.Layer.Markers("MarkerLayer");
+    const markers = new window.Tmap.Layer.Markers("MarkerLayer");
     map.addLayer(markers);
-    const size = new Tmap.Size(26, 38);
-    const offset = new Tmap.Pixel(-(size.w / 2), -(size.h / 2));
+    const size = new window.Tmap.Size(26, 38);
+    const offset = new window.Tmap.Pixel(-(size.w / 2), -(size.h / 2));
     const htmlIcon = createHtmlicon(order);
-    const markerIcon = new Tmap.IconHtml(htmlIcon, size, offset);// 마커 아이콘 설정
-    const marker = new Tmap.Marker(new Tmap.LonLat(lon, lat).transform(pr_4326, pr_3857), markerIcon);
+    const markerIcon = new window.Tmap.IconHtml(htmlIcon, size, offset);// 마커 아이콘 설정
+    const marker = new window.Tmap.Marker(new window.Tmap.LonLat(lon, lat).transform(pr_4326, pr_3857), markerIcon);
     markers.addMarker(marker);
   };
 
   const drawStartMaker = () => {
-    const markerLayer = new Tmap.Layer.Markers();
+    const markerLayer = new window.Tmap.Layer.Markers();
     map.addLayer(markerLayer);
 
-    const lonlat = new Tmap.LonLat(startLon, startLat).transform(pr_4326, pr_3857);
-    const size = new Tmap.Size(24, 38);
-    const offset = new Tmap.Pixel(-(size.w / 2), -(size.h));
-    const icon = new Tmap.Icon('images/marker_green.png', size, offset);
+    const lonlat = new window.Tmap.LonLat(startLon, startLat).transform(pr_4326, pr_3857);
+    const size = new window.Tmap.Size(24, 38);
+    const offset = new window.Tmap.Pixel(-(size.w / 2), -(size.h));
+    const icon = new window.Tmap.Icon('images/marker_green.png', size, offset);
 
-    const marker = new Tmap.Marker(lonlat, icon);
+    const marker = new window.Tmap.Marker(lonlat, icon);
     markerLayer.addMarker(marker);
   };
-
-  useEffect(() => {
-    setMap(new Tmap.Map({
-      div: "myTmap",
-      height: '750px',
-      transitionEffect: "resize",
-      animation: true
-    }));
-  }, []);
 
   if (map && orders.length > 0) {
     drawStartMaker();
     for (let i = 0; i < orders.length; i++) {
       drawMarker(orders[i].lon, orders[i].lat, i + 1);
     }
-    map.setCenter(new Tmap.LonLat(startLon, startLat).transform(pr_4326, pr_3857), 13);
+    map.setCenter(new window.Tmap.LonLat(startLon, startLat).transform(pr_4326, pr_3857), 13);
   }
 
   return (
@@ -94,7 +88,8 @@ function MY_Tmap({orders}) {
 }
 
 MY_Tmap.propTypes = {
-  orders: PropTypes.array
+  orders: PropTypes.array,
+  map: PropTypes.object,
 };
 
 export default MY_Tmap;
