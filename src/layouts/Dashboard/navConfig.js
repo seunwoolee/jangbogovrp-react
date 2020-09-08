@@ -1,28 +1,10 @@
 import React, {useEffect} from 'react';
-import {colors} from '@material-ui/core';
-import ReceiptIcon from '@material-ui/icons/ReceiptOutlined';
-import ReceiptRoundedIcon from '@material-ui/icons/ReceiptRounded';
-import CreateIcon from '@material-ui/icons/Create';
-import DescriptionRoundedIcon from '@material-ui/icons/DescriptionRounded';
-import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
-import BorderColorIcon from '@material-ui/icons/BorderColor';
 import RestorePageOutlinedIcon from '@material-ui/icons/RestorePageOutlined';
 import SettingsIcon from '@material-ui/icons/Settings';
-import Label from 'src/components/Label';
-import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
-import BorderColorOutlinedIcon from '@material-ui/icons/BorderColorOutlined';
-import {useDispatch, useSelector} from "react-redux";
-import {getErpTodoCount, getTodoCount, logout} from "../../actions";
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
+import MapIcon from '@material-ui/icons/Map';
 
 export function MY_navConfig() {
-  const dispatch = useDispatch();
-  const session = useSelector((state) => state.session);
-
-  useEffect(() => {
-    dispatch(getTodoCount(localStorage.getItem('token')));
-    dispatch(getErpTodoCount(localStorage.getItem('token')));
-  }, [])
 
   return [
     {
@@ -33,11 +15,11 @@ export function MY_navConfig() {
           href: '/preview',
           icon: LocalShippingIcon,
         },
-        {
-          title: '차량자동배차',
-          href: '/delivery',
-          icon: LocalShippingIcon,
-        },
+        // {
+        //   title: '경로보기',
+        //   href: '/route',
+        //   icon: MapIcon,
+        // },
         {
           title: '배차내역조회',
           href: '/deliveryList',

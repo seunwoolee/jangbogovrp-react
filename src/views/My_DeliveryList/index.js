@@ -10,8 +10,10 @@ import Header from './Header';
 import {isloading} from "../../actions";
 import MY_Tmap from "../../components/MY_Tmap";
 import Grid from "@material-ui/core/Grid";
-import Result from "./Result";
 import LoadingBar from "../../components/MY_LoadingBar";
+import moment from "moment";
+import Result from "./Result";
+import MY_SearchBar from "../../components/MY_DeliverySearchBar";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,27 +25,37 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function Preview() {
+const initialValues = {
+  startDate: moment().add(-10, 'days'),
+  endDate: moment().add(+1, 'month')
+};
+
+function DeliveryList() {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const [orderData, setOrderData] = useState([]);
+  const [deliveryData, setDeliveryData] = useState([]);
   const [map, setMap] = useState(null);
+  const [inputDateValues, setInputDateValues] = useState({...initialValues});
   const [isAm, setIsAm] = useState(true);
 
   const fetchOrderData = () => {
     dispatch(isloading(true));
-    const url = "customer/preview_order/";
+    const url = "delivery/deliveries/";
     const config = {
       headers: {Authorization: `Token ${localStorage.getItem('token')}`},
-      params: {isAm: isAm}
+      params: {
+      startDate: moment(inputDateValues.startDate).format('YYYY-MM-DD'),
+      endDate: moment(inputDateValues.endDate).format('YYYY-MM-DD'),
+      isAm: isAm
+    }
     };
 
     dispatch(isloading(true));
     axios.get(url, config)
       .then(res => {
         dispatch(isloading(false));
-        setOrderData(res.data);
+        setDeliveryData(res.data);
       })
       // eslint-disable-next-line no-unused-vars
       .catch(err => dispatch(isloading(false)));
@@ -56,39 +68,23 @@ function Preview() {
     fetchOrderData();
   }, []);
 
-  useEffect(() => {
-    fetchOrderData();
-  }, [isAm]);
-
-  useEffect(() => {
-    setMap(new window.Tmap.Map({
-      div: "myTmap",
-      height: '750px',
-      transitionEffect: "resize",
-      animation: true
-    }));
-  }, []);
-
   return (
     <Page
       className={classes.root}
       title="배송지역 미리보기"
     >
 
-      <LoadingBar/>
+      <LoadingBar />
 
       <Container
         maxWidth={false}
         className={classes.container}
       >
-        <Header/>
-        <Grid container spacing={1}>
-          <Grid item xs={12} lg={9}>
-            {/* eslint-disable-next-line react/jsx-pascal-case */}
-            <MY_Tmap orders={orderData} map={map}/>
-          </Grid>
-          <Grid item xs={12} lg={3}>
-            <Result orders={orderData} map={map} isAm={isAm} setIsAm={setIsAm}/>
+        <Header />
+        <MY_SearchBar dateValues={inputDateValues} setDateValues={setInputDateValues} onSearch={fetchOrderData}/>
+        <Grid container spacing={3}>
+          <Grid item xs={12} lg={12}>
+            <Result deliveries={deliveryData} />
           </Grid>
         </Grid>
       </Container>
@@ -96,4 +92,4 @@ function Preview() {
   );
 }
 
-export default Preview;
+export default DeliveryList;

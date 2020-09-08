@@ -74,14 +74,14 @@ export default [
         component: lazy(() => import('src/views/My_Preview'))
       },
       {
-        path: '/delivery',
+        path: '/route/:id',
         exact: true,
-        component: lazy(() => import('src/views/My_ReportWritten'))
+        component: lazy(() => import('src/views/My_Route'))
       },
       {
         path: '/deliveryList',
         exact: true,
-        component: lazy(() => import('src/views/My_ReportCreate'))
+        component: lazy(() => import('src/views/My_DeliveryList'))
       },
       {
         path: '/reportApproved',

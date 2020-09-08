@@ -35,10 +35,6 @@ export const pr_4326 = new window.Tmap.Projection("EPSG:4326");
 
 function MY_Tmap({orders, map}) {
   const classes = useStyles();
-  // const [window.Tmap, _] = useState(window.Tmap);
-  // const [map, setMap] = useState(null);
-  // const pr_3857 = new window.Tmap.Projection("EPSG:3857");
-  // const pr_4326 = new window.Tmap.Projection("EPSG:4326");
   const startLon = 128.539506;
   const startLat = 35.929894;
 
@@ -46,7 +42,7 @@ function MY_Tmap({orders, map}) {
     const style = "position:absolute; z-index:1; color:#000; margin:3px 0 0 0; width:100%; text-align:center; font-weight:bold;";
     const span = `<span style='${style}'>${String(number)}</span>`;
     // const iconHtml = `<div style="text-align:center;">${span}<img src="images/icon/marker_0.png" /></div>`;
-    const iconHtml = `<div style="text-align:center;">${span}<img src="images/marker_0.png" /></div>`;
+    const iconHtml = `<div style="text-align:center;">${span}<img src="images/makers/marker_0.png" /></div>`;
     return iconHtml;
   };
 
@@ -68,7 +64,7 @@ function MY_Tmap({orders, map}) {
     const lonlat = new window.Tmap.LonLat(startLon, startLat).transform(pr_4326, pr_3857);
     const size = new window.Tmap.Size(24, 38);
     const offset = new window.Tmap.Pixel(-(size.w / 2), -(size.h));
-    const icon = new window.Tmap.Icon('images/marker_green.png', size, offset);
+    const icon = new window.Tmap.Icon('images/makers/marker_green.png', size, offset);
 
     const marker = new window.Tmap.Marker(lonlat, icon);
     markerLayer.addMarker(marker);

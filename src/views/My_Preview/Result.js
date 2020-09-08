@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React, {Fragment, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -9,6 +9,9 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import PropTypes from "prop-types";
 import MY_Tmap, {pr_3857, pr_4326} from "../../components/MY_Tmap";
+import {Typography} from "@material-ui/core";
+import moment from "moment";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles({
   root: {
@@ -21,16 +24,19 @@ const useStyles = makeStyles({
 });
 
 
-export default function CustomerTable({orders, map}) {
+export default function Result({orders, map, isAm, setIsAm}) {
   const classes = useStyles();
-
   const moveTo = (lon, lat) => {
-        map.setCenter(new window.Tmap.LonLat(lon, lat).transform(pr_4326, pr_3857), 16);
+    map.setCenter(new window.Tmap.LonLat(lon, lat).transform(pr_4326, pr_3857), 16);
   }
-
 
   return (
     <TableContainer component={Paper} className={classes.root}>
+      <Typography variant="h4">
+        {moment().format('YYYY년 MM월 DD일 ')}
+        <Button variant="contained" color={isAm ? "primary" : ""} onClick={() => setIsAm(true)}>오전</Button>
+        <Button variant="contained" color={!isAm ? "primary" : ""} onClick={() => setIsAm(false)}>오후</Button>
+      </Typography>
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -63,7 +69,9 @@ export default function CustomerTable({orders, map}) {
   );
 }
 
-CustomerTable.propTypes = {
+Result.propTypes = {
   orders: PropTypes.array,
   map: PropTypes.object,
+  isAm: PropTypes.bool,
+  setIsAm: PropTypes.func
 };

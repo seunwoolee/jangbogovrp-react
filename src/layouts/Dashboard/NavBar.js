@@ -110,7 +110,6 @@ function reduceChildRoutes({
       path: item.href,
       exact: false
     });
-
     acc.push(
       <NavItem
         depth={depth}
@@ -171,26 +170,6 @@ function NavBar({ openMobile, onMobileClose, className, ...rest }) {
         }))}
       </nav>
       <Divider className={classes.divider} />
-      {/*<Tooltip title="개인 정보 변경">*/}
-      {/*  <div className={classes.profile} onClick={() => setOpen(true)}>*/}
-      {/*      <Avatar*/}
-      {/*        alt="Person"*/}
-      {/*        // onClick={() => setOpen(true)}*/}
-      {/*        className={classes.avatar}*/}
-      {/*        src={session.user.avatar}*/}
-      {/*      />*/}
-      {/*    <div className={classes.details}>*/}
-      {/*      <Link*/}
-      {/*        variant="h5"*/}
-      {/*        color="textPrimary"*/}
-      {/*        underline="none"*/}
-      {/*      >*/}
-      {/*        {`${session.user.name} ${session.user.position}`}*/}
-      {/*      </Link>*/}
-      {/*      <Typography variant="body2">{session.user.department}</Typography>*/}
-      {/*    </div>*/}
-      {/*  </div>*/}
-      {/*</Tooltip>*/}
     </div>
   );
 
