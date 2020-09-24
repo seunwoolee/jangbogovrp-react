@@ -1,17 +1,17 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/styles';
 import {Container} from '@material-ui/core';
 import Page from 'src/components/Page';
-import {useDispatch, useSelector} from "react-redux";
-import {useHistory, useLocation, useParams} from "react-router";
+import {useDispatch} from "react-redux";
+import {useHistory, useParams} from "react-router";
 import axios from "../../utils/my_axios";
 
 import Header from './Header';
 import {isloading} from "../../actions";
-import MY_Tmap from "../../components/MY_Tmap";
 import Grid from "@material-ui/core/Grid";
 import Result from "./Result";
 import LoadingBar from "../../components/MY_LoadingBar";
+import MY_Tmap from "./MY_Tmap";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function Route() {
+function CreateRoute() {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -31,6 +31,7 @@ function Route() {
 
   const [mapGroups, setMapGroups] = useState([]);
   const [map, setMap] = useState(null);
+  const [geoDatas, setGeoDatas] = useState([]);
 
   const fetchOrderData = () => {
     dispatch(isloading(true));
@@ -44,14 +45,23 @@ function Route() {
     dispatch(isloading(true));
     axios.get(url, config)
       .then(res => {
-                debugger;
-
-        dispatch(isloading(false));
-        setMapGroups(res.data);
+        return res.data;
       })
-      // eslint-disable-next-line no-unused-vars
+      .then(mapGroups => {
+        config.params.deliveryDate = mapGroups[0].deliveryDate;
+        config.params.isAm = mapGroups[0].meridiemType;
+        getMaps(config).then(response => {
+          setGeoDatas(response.data);
+          dispatch(isloading(false));
+          setMapGroups(mapGroups);
+        })
+      })
       .catch(err => dispatch(isloading(false)));
   };
+
+  const getMaps = async (config) => {
+    return await axios.get("delivery/maps/", config)
+  }
 
   useEffect(() => {
     if (!(localStorage.getItem('token'))) {
@@ -69,26 +79,28 @@ function Route() {
     }));
   }, []);
 
+  console.log(geoDatas);
+
   return (
     <Page
       className={classes.root}
       title="배송지역 미리보기"
     >
 
-      <LoadingBar />
+      <LoadingBar/>
 
       <Container
         maxWidth={false}
         className={classes.container}
       >
-        <Header />
+        <Header/>
         <Grid container spacing={1}>
           <Grid item xs={12} lg={9}>
             {/* eslint-disable-next-line react/jsx-pascal-case */}
-            <MY_Tmap orders={[]} map={map}/>
+            <MY_Tmap geoDatas={geoDatas} map={map}/>
           </Grid>
           <Grid item xs={12} lg={3}>
-            <Result mapGroups={mapGroups} map={map} />
+            <Result mapGroups={mapGroups} map={map}/>
           </Grid>
         </Grid>
       </Container>
@@ -96,4 +108,4 @@ function Route() {
   );
 }
 
-export default Route;
+export default CreateRoute;

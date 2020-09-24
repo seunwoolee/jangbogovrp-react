@@ -12,6 +12,11 @@ import MY_Tmap, {pr_3857, pr_4326} from "../../components/MY_Tmap";
 import {Typography} from "@material-ui/core";
 import moment from "moment";
 import Button from "@material-ui/core/Button";
+import {isloading} from "../../actions";
+import axios from "../../utils/my_axios";
+import globalAxios from "axios"
+import {useDispatch} from "react-redux";
+import {APIKEY} from "../../my_config";
 
 const useStyles = makeStyles({
   root: {
@@ -26,16 +31,88 @@ const useStyles = makeStyles({
 
 export default function Result({orders, map, isAm, setIsAm}) {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const moveTo = (lon, lat) => {
     map.setCenter(new window.Tmap.LonLat(lon, lat).transform(pr_4326, pr_3857), 16);
+  }
+
+  const saveGeolocationToErp = () => {
+    if (window.confirm('좌표를 수집 하시겠습니까?')) {
+      dispatch(isloading(true));
+      const url = "customer/pre_processing_geolocations/";
+      const config = {
+        headers: {Authorization: `Token ${localStorage.getItem('token')}`},
+        params: {isAm: isAm}
+      };
+
+      dispatch(isloading(true));
+      axios.get(url, config)
+        .then(res => {
+          return res.data
+        })
+        .then(geolocations => {
+          console.log(geolocations);
+          return getGeolocationRecursive(geolocations);
+        })
+        .catch(err => dispatch(isloading(false)));
+    }
+  }
+
+  const getGeolocationRecursive = (geolocations) => {
+    const geolocation = geolocations.pop();
+
+    if (geolocation === undefined) {
+      return dispatch(isloading(false));
+    }
+
+    setTimeout(() => {
+      getGeolocationByTmap(geolocation)
+        .then(response => {
+          const coordinateInfo = response.data.coordinateInfo;
+          let lat = coordinateInfo.lat;
+          let lon = coordinateInfo.lon;
+          if(lat === "" && lon === "") {
+            lat = coordinateInfo.newLat;
+            lon = coordinateInfo.newLon;
+          }
+          return saveToErp(geolocation.orderNumber, lat, lon);
+        })
+      getGeolocationRecursive(geolocations);
+    }, 200)
+  }
+
+  const getGeolocationByTmap = async (geolocation) => {
+    let params = {
+      city_do: geolocation.si,
+      gu_gun: geolocation.gu,
+      dong: `${geolocation.dong} ${geolocation.bunji} ${geolocation.detail}`,
+      addressFlag: "F00",
+      coordType: "WGS84GEO",
+      appKey: APIKEY,
+    }
+    return await globalAxios.get("https://api2.sktelecom.com/tmap/geo/geocoding", {params: params})
+  }
+
+  const saveToErp = async (orderNumber, lat, lon) => {
+    let params = {
+      orderNumber: orderNumber,
+      lat: lat,
+      lon: lon,
+    }
+    console.log(params);
+    // return await globalAxios.get("https://api2.sktelecom.com/tmap/geo/geocoding", {params: params})
   }
 
   return (
     <TableContainer component={Paper} className={classes.root}>
       <Typography variant="h4">
         {moment().format('YYYY년 MM월 DD일 ')}
-        <Button variant="contained" color={isAm ? "primary" : ""} onClick={() => setIsAm(true)}>오전</Button>
-        <Button variant="contained" color={!isAm ? "primary" : ""} onClick={() => setIsAm(false)}>오후</Button>
+        <Button variant="outlined" onClick={saveGeolocationToErp} size={"small"}>좌표수집</Button>
+        <Button variant="contained" color={isAm ? "primary" : ""} onClick={() => setIsAm(true)}
+                size={"small"}>오전</Button>
+        <Button variant="contained" color={!isAm ? "primary" : ""} onClick={() => setIsAm(false)}
+                size={"small"}>오후</Button>
       </Typography>
       <Table className={classes.table} aria-label="simple table">
         <TableHead>

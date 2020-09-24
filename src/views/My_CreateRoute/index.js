@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/styles';
 import {Container} from '@material-ui/core';
 import Page from 'src/components/Page';
-import {useDispatch, useSelector} from "react-redux";
-import {useHistory, useLocation} from "react-router";
+import {useDispatch} from "react-redux";
+import {useHistory, useParams} from "react-router";
 import axios from "../../utils/my_axios";
 
 import Header from './Header';
@@ -12,7 +12,6 @@ import Grid from "@material-ui/core/Grid";
 import Result from "./Result";
 import LoadingBar from "../../components/MY_LoadingBar";
 import MY_Tmap from "./MY_Tmap";
-import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,31 +23,35 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function Preview() {
+function Route() {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const [orderData, setOrderData] = useState([]);
+
+  const [mapGroups, setMapGroups] = useState([]);
   const [map, setMap] = useState(null);
-  const [isAm, setIsAm] = useState(true);
+  const [geoDatas, setGeoDatas] = useState([]);
 
   const fetchOrderData = () => {
     dispatch(isloading(true));
-    const url = "customer/preview_order/";
+    const url = "core/create_route/";
     const config = {
       headers: {Authorization: `Token ${localStorage.getItem('token')}`},
-      params: {isAm: isAm, today: moment().format('YYYY-MM-DD')}
     };
 
     dispatch(isloading(true));
     axios.get(url, config)
       .then(res => {
         dispatch(isloading(false));
-        setOrderData(res.data);
+        setGeoDatas(res.data);
+        return res.data;
       })
-      // eslint-disable-next-line no-unused-vars
       .catch(err => dispatch(isloading(false)));
   };
+
+  const getMaps = async (config) => {
+    return await axios.get("delivery/maps/", config)
+  }
 
   useEffect(() => {
     if (!(localStorage.getItem('token'))) {
@@ -58,23 +61,15 @@ function Preview() {
   }, []);
 
   useEffect(() => {
-    fetchOrderData()
-    if (map !== null) {
-      map.destroy();
-    }
-    setMap(null);
-  }, [isAm]);
+    setMap(new window.Tmap.Map({
+      div: "myTmap",
+      height: '750px',
+      transitionEffect: "resize",
+      animation: true
+    }));
+  }, []);
 
-  useEffect(() => {
-    if (map === null) {
-      setMap(new window.Tmap.Map({
-        div: "myTmap",
-        height: '750px',
-        transitionEffect: "resize",
-        animation: true
-      }));
-    }
-  }, [orderData]);
+  console.log(geoDatas);
 
   return (
     <Page
@@ -92,10 +87,10 @@ function Preview() {
         <Grid container spacing={1}>
           <Grid item xs={12} lg={9}>
             {/* eslint-disable-next-line react/jsx-pascal-case */}
-            <MY_Tmap orders={orderData} map={map}/>
+            <MY_Tmap geoDatas={geoDatas} map={map}/>
           </Grid>
           <Grid item xs={12} lg={3}>
-            <Result orders={orderData} map={map} isAm={isAm} setIsAm={setIsAm}/>
+            <Result mapGroups={mapGroups} map={map}/>
           </Grid>
         </Grid>
       </Container>
@@ -103,4 +98,4 @@ function Preview() {
   );
 }
 
-export default Preview;
+export default Route;

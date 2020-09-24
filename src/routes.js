@@ -79,6 +79,11 @@ export default [
         component: lazy(() => import('src/views/My_Route'))
       },
       {
+        path: '/createRoute',
+        exact: true,
+        component: lazy(() => import('src/views/My_CreateRoute'))
+      },
+      {
         path: '/deliveryList',
         exact: true,
         component: lazy(() => import('src/views/My_DeliveryList'))
