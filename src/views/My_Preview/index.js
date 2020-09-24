@@ -95,7 +95,7 @@ function Preview() {
             <MY_Tmap orders={orderData} map={map}/>
           </Grid>
           <Grid item xs={12} lg={3}>
-            <Result orders={orderData} map={map} isAm={isAm} setIsAm={setIsAm}/>
+            <Result orders={orderData} fetchOrderData={fetchOrderData} map={map} isAm={isAm} setIsAm={setIsAm}/>
           </Grid>
         </Grid>
       </Container>

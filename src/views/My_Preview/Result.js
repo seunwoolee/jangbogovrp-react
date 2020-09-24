@@ -29,7 +29,7 @@ const useStyles = makeStyles({
 });
 
 
-export default function Result({orders, map, isAm, setIsAm}) {
+export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -52,10 +52,11 @@ export default function Result({orders, map, isAm, setIsAm}) {
           return res.data
         })
         .then(geolocations => {
-          console.log(geolocations);
           return getGeolocationRecursive(geolocations);
         })
-        .catch(err => dispatch(isloading(false)));
+        .catch(err => {
+          fetchOrderData();
+        });
     }
   }
 
@@ -63,7 +64,8 @@ export default function Result({orders, map, isAm, setIsAm}) {
     const geolocation = geolocations.pop();
 
     if (geolocation === undefined) {
-      return dispatch(isloading(false));
+      return fetchOrderData();
+
     }
 
     setTimeout(() => {
@@ -72,7 +74,7 @@ export default function Result({orders, map, isAm, setIsAm}) {
           const coordinateInfo = response.data.coordinateInfo;
           let lat = coordinateInfo.lat;
           let lon = coordinateInfo.lon;
-          if(lat === "" && lon === "") {
+          if (lat === "" && lon === "") {
             lat = coordinateInfo.newLat;
             lon = coordinateInfo.newLon;
           }
@@ -86,7 +88,7 @@ export default function Result({orders, map, isAm, setIsAm}) {
     let params = {
       city_do: geolocation.si,
       gu_gun: geolocation.gu,
-      dong: `${geolocation.dong} ${geolocation.bunji} ${geolocation.detail}`,
+      dong: `${geolocation.dong} ${geolocation.bun_ji} ${geolocation.detail}`,
       addressFlag: "F00",
       coordType: "WGS84GEO",
       appKey: APIKEY,
@@ -95,13 +97,17 @@ export default function Result({orders, map, isAm, setIsAm}) {
   }
 
   const saveToErp = async (orderNumber, lat, lon) => {
+    const url = "customer/save_geolocation/";
     let params = {
       orderNumber: orderNumber,
       lat: lat,
       lon: lon,
     }
-    console.log(params);
-    // return await globalAxios.get("https://api2.sktelecom.com/tmap/geo/geocoding", {params: params})
+    const config = {
+      headers: {Authorization: `Token ${localStorage.getItem('token')}`},
+      params: params
+    };
+    return await axios.get(url, config)
   }
 
   return (
@@ -109,9 +115,9 @@ export default function Result({orders, map, isAm, setIsAm}) {
       <Typography variant="h4">
         {moment().format('YYYY년 MM월 DD일 ')}
         <Button variant="outlined" onClick={saveGeolocationToErp} size={"small"}>좌표수집</Button>
-        <Button variant="contained" color={isAm ? "primary" : ""} onClick={() => setIsAm(true)}
+        <Button variant="contained" color={isAm ? "primary" : "default"} onClick={() => setIsAm(true)}
                 size={"small"}>오전</Button>
-        <Button variant="contained" color={!isAm ? "primary" : ""} onClick={() => setIsAm(false)}
+        <Button variant="contained" color={!isAm ? "primary" : "default"} onClick={() => setIsAm(false)}
                 size={"small"}>오후</Button>
       </Typography>
       <Table className={classes.table} aria-label="simple table">
@@ -131,7 +137,8 @@ export default function Result({orders, map, isAm, setIsAm}) {
                 </TableCell>
               </TableRow>
 
-              <TableRow className={classes.tableRows} hover onClick={() => moveTo(order.lon, order.lat)}>
+              <TableRow className={classes.tableRows} hover
+                        onClick={() => order.lon && order.lat ? moveTo(order.lon, order.lat) : null}>
                 <TableCell align="center">
                   {order.id}
                 </TableCell>
@@ -148,7 +155,8 @@ export default function Result({orders, map, isAm, setIsAm}) {
 
 Result.propTypes = {
   orders: PropTypes.array,
+  fetchOrderData: PropTypes.func,
   map: PropTypes.object,
   isAm: PropTypes.bool,
-  setIsAm: PropTypes.func
+  setIsAm: PropTypes.func,
 };
