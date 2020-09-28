@@ -79,6 +79,9 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
           }
           return saveToErp(geolocation.orderNumber, lat, lon);
         })
+        .catch(error => {
+          debugger;
+        })
       getGeolocationRecursive(geolocations);
     }, 200)
   }

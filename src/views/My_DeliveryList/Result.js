@@ -30,6 +30,8 @@ const useStyles = makeStyles({
 export default function Result({deliveries}) {
   const classes = useStyles();
 
+    console.log(deliveries)
+
   return (
     <TableContainer component={Paper} className={classes.root}>
       <Table className={classes.table} aria-label="simple table">
@@ -44,14 +46,16 @@ export default function Result({deliveries}) {
         </TableHead>
         <TableBody>
           {deliveries.map((delivery) => (
-            <Fragment key={delivery.vs_seq}>
+            <Fragment key={delivery.id}>
               <Tooltip title="경로보기">
-              <TableRow component={RouterLink} to={"/route/" + delivery.vs_seq} className={classes.tableRows} hover>
-                <TableCell align="center">{delivery.vs_deliveryDate}</TableCell>
-                <TableCell align="center">{delivery.vs_meridiemType === '0' ? '오전' : '오후'}</TableCell>
-                <TableCell align="center">{(delivery.totalDistance / 1000).toFixed(1)}km</TableCell>
-                <TableCell align="center">{delivery.counts}</TableCell>
-                <TableCell align="center">{getThousand(delivery.pay)}원</TableCell>
+              <TableRow component={RouterLink} to={"/route/" + delivery.id} className={classes.tableRows} hover>
+              {/*<TableRow component={RouterLink} to={"/route/" + delivery.vs_seq} className={classes.tableRows} hover>*/}
+                <TableCell align="center">{delivery.date}</TableCell>
+                <TableCell align="center">{delivery.is_am ? '오전' : '오후'}</TableCell>
+                {/*<TableCell align="center">{(delivery.totalDistance / 1000).toFixed(1)}km</TableCell>*/}
+                <TableCell align="center">추가해야됨km</TableCell>
+                <TableCell align="center">{delivery.count_car}</TableCell>
+                <TableCell align="center">{getThousand(delivery.price)}원</TableCell>
               </TableRow>
               </Tooltip>
             </Fragment>

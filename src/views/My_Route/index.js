@@ -23,51 +23,42 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function CreateRoute() {
+function MY_Route() {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const param = useParams();
 
-  const [mapGroups, setMapGroups] = useState([]);
+  // const [mapGroups, setMapGroups] = useState([]);
   const [map, setMap] = useState(null);
   const [geoDatas, setGeoDatas] = useState([]);
 
-  const fetchOrderData = () => {
-    dispatch(isloading(true));
-    const url = "delivery/map_groups/";
-    const vs_seq = param.id;
+  const fetchRoute = async () => {
+    const url = "delivery/maps/";
+    const routeM = param.id;
     const config = {
       headers: {Authorization: `Token ${localStorage.getItem('token')}`},
-      params: {vs_seq: vs_seq}
+      params: {routeM: routeM}
     };
 
     dispatch(isloading(true));
-    axios.get(url, config)
-      .then(res => {
-        return res.data;
-      })
-      .then(mapGroups => {
-        config.params.deliveryDate = mapGroups[0].deliveryDate;
-        config.params.isAm = mapGroups[0].meridiemType;
-        getMaps(config).then(response => {
-          setGeoDatas(response.data);
-          dispatch(isloading(false));
-          setMapGroups(mapGroups);
-        })
-      })
-      .catch(err => dispatch(isloading(false)));
+    const response = await getRoute(url, config);
+    dispatch(isloading(false));
+
+    if (response.status === 200) {
+      setGeoDatas(response.data.route_d);
+    }
   };
 
-  const getMaps = async (config) => {
-    return await axios.get("delivery/maps/", config)
+  const getRoute = async (url, config) => {
+    return await axios.get(url, config)
   }
 
   useEffect(() => {
     if (!(localStorage.getItem('token'))) {
       history.push('/auth/login');
     }
-    fetchOrderData();
+    fetchRoute();
   }, []);
 
   useEffect(() => {
@@ -80,6 +71,7 @@ function CreateRoute() {
   }, []);
 
   console.log(geoDatas);
+  // console.log(mapGroups);
 
   return (
     <Page
@@ -96,16 +88,15 @@ function CreateRoute() {
         <Header/>
         <Grid container spacing={1}>
           <Grid item xs={12} lg={9}>
-            {/* eslint-disable-next-line react/jsx-pascal-case */}
             <MY_Tmap geoDatas={geoDatas} map={map}/>
           </Grid>
-          <Grid item xs={12} lg={3}>
-            <Result mapGroups={mapGroups} map={map}/>
-          </Grid>
+          {/*<Grid item xs={12} lg={3}>*/}
+          {/*  <Result mapGroups={mapGroups} map={map}/>*/}
+          {/*</Grid>*/}
         </Grid>
       </Container>
     </Page>
   );
 }
 
-export default CreateRoute;
+export default MY_Route;

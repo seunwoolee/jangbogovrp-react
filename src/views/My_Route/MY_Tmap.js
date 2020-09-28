@@ -54,9 +54,9 @@ function MY_Tmap({geoDatas, map}) {
     map.addLayer(markers);
     const size = new window.Tmap.Size(26, 38);
     const offset = new window.Tmap.Pixel(-(size.w / 2), -(size.h / 2));
-    const htmlIcon = createHtmlicon(geoData.vehicleNo, String(geoData.vehicleNoIndex));
+    const htmlIcon = createHtmlicon(geoData.route_number, String(geoData.route_index));
     const markerIcon = new window.Tmap.IconHtml(htmlIcon, size, offset);// 마커 아이콘 설정
-    const marker = new window.Tmap.Marker(new window.Tmap.LonLat(geoData.deguestLon, geoData.deguestLat)
+    const marker = new window.Tmap.Marker(new window.Tmap.LonLat(geoData.customer_info.longitude, geoData.customer_info.latitude)
       .transform(pr_4326, pr_3857), markerIcon);
     markers.addMarker(marker);
   };
@@ -89,9 +89,8 @@ function MY_Tmap({geoDatas, map}) {
     const vectorLayer = new window.Tmap.Layer.Vector("vector", {styleMap: styleMap});
     // vectorLayer.events.register("featuresadded", vectorLayer, null); // 그리기 완료 이벤트 생성
     map.addLayer(vectorLayer);
-    debugger;
     if (geoData.jsonData) {
-      const geoForm = format.read(geoData.jsonData);
+      const geoForm = format.read(geoData.json_map);
       vectorLayer.addFeatures(geoForm);
     }
 

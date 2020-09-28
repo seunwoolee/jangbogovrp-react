@@ -55,6 +55,7 @@ function DeliveryList() {
     axios.get(url, config)
       .then(res => {
         dispatch(isloading(false));
+        debugger;
         setDeliveryData(res.data);
       })
       // eslint-disable-next-line no-unused-vars

@@ -12,9 +12,10 @@ import moment from "moment";
 import Typography from "@material-ui/core/Typography";
 import {makeStyles} from "@material-ui/styles";
 import axios from "../../../utils/my_axios";
-import {getTodoCount} from "../../../actions";
+import {getTodoCount, isloading} from "../../../actions";
 import {APIKEY} from "../../../my_config";
 import globalAxios from "axios";
+import {useDispatch} from "react-redux";
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -37,14 +38,21 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
   const today = moment().format('YYYY-MM-DD');
   const [carCount, setCarCount] = useState('');
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const config = {headers: {Authorization: `Token ${localStorage.getItem('token')}`}};
   const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 
   const onSubmit = async () => {
+    dispatch(isloading(true));
+
     let response = await create_customer();
     if (response.status !== 200) {
       return onComplete(false, '수집 되지 않은 좌표가 있습니다');
     }
+
+
+    debugger
 
     const invalidMutualDistanceCustomers = response.data;
     response = await getMutualDistanceByTmapRecursive(invalidMutualDistanceCustomers);
@@ -56,13 +64,14 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
     //   response = await getMutualDistanceRecursive(isNotValidCustomers, allCustomers);
     // }
 
+    debugger
 
     response = await create_route();
     if (response.status !== 200) {
       return onComplete(false, '경로 생성 실패');
     }
 
-
+    dispatch(isloading(false));
     return onComplete(true, '배차 완료');
   };
 
