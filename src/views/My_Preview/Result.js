@@ -65,7 +65,6 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
 
     if (geolocation === undefined) {
       return fetchOrderData();
-
     }
 
     setTimeout(() => {

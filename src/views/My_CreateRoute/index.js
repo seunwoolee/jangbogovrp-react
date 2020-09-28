@@ -44,6 +44,7 @@ function Route() {
       .then(res => {
         dispatch(isloading(false));
         setGeoDatas(res.data);
+        debugger;
         return res.data;
       })
       .catch(err => dispatch(isloading(false)));

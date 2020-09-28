@@ -31,6 +31,7 @@ function Preview() {
   const [orderData, setOrderData] = useState([]);
   const [map, setMap] = useState(null);
   const [isAm, setIsAm] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
 
   const fetchOrderData = () => {
     dispatch(isloading(true));
@@ -88,7 +89,10 @@ function Preview() {
         maxWidth={false}
         className={classes.container}
       >
-        <Header/>
+        <Header
+          isAm={isAm}
+          openModal={openModal}
+          setOpenModal={setOpenModal} />
         <Grid container spacing={1}>
           <Grid item xs={12} lg={9}>
             {/* eslint-disable-next-line react/jsx-pascal-case */}
