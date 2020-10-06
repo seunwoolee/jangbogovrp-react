@@ -61,11 +61,11 @@ function MY_Route() {
   }, []);
 
   useEffect(() => {
-    setMap(new window.Tmap.Map({
-      div: "myTmap",
+    setMap(new window.Tmapv2.Map("myTmap",{
       height: '750px',
       transitionEffect: "resize",
-      animation: true
+      animation: true,
+      zoom: 12
     }));
   }, []);
 
