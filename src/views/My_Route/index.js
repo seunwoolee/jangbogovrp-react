@@ -28,13 +28,12 @@ function MY_Route() {
   const history = useHistory();
   const dispatch = useDispatch();
   const param = useParams();
-
-  // const [mapGroups, setMapGroups] = useState([]);
   const [map, setMap] = useState(null);
   const [geoDatas, setGeoDatas] = useState([]);
+  let mapGroups = [[]];
+  let currentGroupIndex = 0;
 
   const fetchRoute = async () => {
-    const url = "delivery/maps/";
     const routeM = param.id;
     const config = {
       headers: {Authorization: `Token ${localStorage.getItem('token')}`},
@@ -42,7 +41,7 @@ function MY_Route() {
     };
 
     dispatch(isloading(true));
-    const response = await getRoute(url, config);
+    const response = await getRoute("delivery/maps/", config);
     dispatch(isloading(false));
 
     if (response.status === 200) {
@@ -70,8 +69,15 @@ function MY_Route() {
     }));
   }, []);
 
-  console.log(geoDatas);
-  // console.log(mapGroups);
+  for (let i = 0; i < geoDatas.length; i++) {
+    if (currentGroupIndex !== geoDatas[i].route_number - 1) {
+      ++currentGroupIndex;
+      mapGroups.push([]);
+    }
+
+    mapGroups[currentGroupIndex].push(geoDatas[i]);
+  }
+
 
   return (
     <Page
@@ -90,9 +96,9 @@ function MY_Route() {
           <Grid item xs={12} lg={9}>
             <MY_Tmap geoDatas={geoDatas} map={map}/>
           </Grid>
-          {/*<Grid item xs={12} lg={3}>*/}
-          {/*  <Result mapGroups={mapGroups} map={map}/>*/}
-          {/*</Grid>*/}
+          <Grid item xs={12} lg={3}>
+            {mapGroups.length > 1 ? <Result mapGroups={mapGroups} map={map}/> : null}
+          </Grid>
         </Grid>
       </Container>
     </Page>

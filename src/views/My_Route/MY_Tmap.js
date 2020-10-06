@@ -39,15 +39,21 @@ function MY_Tmap({geoDatas, map}) {
   const startLat = 35.929894;
   let format = null;
 
-  // const [format, setFormat] = useState()
-
-
   const createHtmlicon = (vehicleNo: string, vehicleNoIndex: string) => {
     const style = "position:absolute; z-index:1; color:#000; margin:3px 0 0 0; width:100%; text-align:center; font-weight:bold;";
     const span = `<span style='${style}'>${vehicleNoIndex}</span>`;
     const iconHtml = `<div style="text-align:center;">${span}<img src="/images/makers/marker_${vehicleNo}.png" /></div>`;
     return iconHtml;
   };
+
+  const onClickMouse = (evt) => {
+    console.log('[onClickMouse]');
+  }
+
+  const onOverMarker = (evt) => {
+    console.log('[onOverMarker]');
+  }
+
 
   const drawMarker = (geoData) => {
     const markers = new window.Tmap.Layer.Markers("MarkerLayer");
@@ -56,10 +62,27 @@ function MY_Tmap({geoDatas, map}) {
     const offset = new window.Tmap.Pixel(-(size.w / 2), -(size.h / 2));
     const htmlIcon = createHtmlicon(geoData.route_number, String(geoData.route_index));
     const markerIcon = new window.Tmap.IconHtml(htmlIcon, size, offset);// 마커 아이콘 설정
-    const marker = new window.Tmap.Marker(new window.Tmap.LonLat(geoData.customer_info.longitude, geoData.customer_info.latitude)
+    let marker = new window.Tmap.Marker(new window.Tmap.LonLat(geoData.customer_info.longitude, geoData.customer_info.latitude)
       .transform(pr_4326, pr_3857), markerIcon);
+
+    // const html = "" +
+    //   "<div style='display:none'><a href=''>자세히보기</a></div>";
+    // const popup = new window.Tmap.Popup("0",
+    //   new window.Tmap.LonLat(geoData.customer_info.longitude, geoData.customer_info.latitude).transform(pr_4326, pr_3857),
+    //   new window.Tmap.Size(300, 80),
+    //   html, true
+    // );
+    // map.addPopup(popup);
+    // popup.hide();
+
+    // marker.events.register("click", marker, onOverMarker);
+    // marker.events.register("click", marker, onClickMouse); //click 이벤트, 마커를 클릭하면 실행하는 이벤트를 등록합니다.
+    // marker.events.register("touchstart", marker, onClickMouse); //click 이벤트, 마커를 클릭하면 실행하는 이벤트를 등록합니다.
+    marker.events.register("click", marker, onOverMarker);
     markers.addMarker(marker);
+
   };
+
 
   const drawStartMaker = () => {
     const markerLayer = new window.Tmap.Layer.Markers();
@@ -77,9 +100,9 @@ function MY_Tmap({geoDatas, map}) {
   const drawLine = (geoData) => {
     const styleMap = new window.Tmap.StyleMap({
       'default': new window.Tmap.Style({
-        pointColor: routeColor[Number(geoData.vehicleNo)],
+        pointColor: routeColor[Number(geoData.route_number)],
         pointRadius: 5,
-        strokeColor: routeColor[Number(geoData.vehicleNo)],
+        strokeColor: routeColor[Number(geoData.route_number)],
         strokeWidth: 4,
         strokeOpacity: 4,
         strokeLinecap: "square",
@@ -89,7 +112,7 @@ function MY_Tmap({geoDatas, map}) {
     const vectorLayer = new window.Tmap.Layer.Vector("vector", {styleMap: styleMap});
     // vectorLayer.events.register("featuresadded", vectorLayer, null); // 그리기 완료 이벤트 생성
     map.addLayer(vectorLayer);
-    if (geoData.jsonData) {
+    if (geoData.json_map) {
       const geoForm = format.read(geoData.json_map);
       vectorLayer.addFeatures(geoForm);
     }

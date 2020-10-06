@@ -57,6 +57,25 @@ export default function MapGroupList({mapGroups}) {
     setChecked(newChecked);
   };
 
+  const getOrderTotalPrice = (mapGroup) => {
+    let totalPrice = 0;
+    for (let i = 0; i < mapGroup.length; i++) {
+      for (let j = 0; j < mapGroup[i].orders.length; j++) {
+        totalPrice += mapGroup[i].orders[j].price;
+      }
+    }
+    return totalPrice;
+  }
+
+  const getTotalDistance = (mapGroup) => {
+    let totalDistance = 0;
+    for (let i = 0; i < mapGroup.length; i++) {
+      totalDistance += mapGroup[i].distance;
+    }
+    return totalDistance;
+  }
+
+
   return (
     <List dense className={classes.root}>
       {mapGroups.map((mapGroup, index) => {
@@ -65,7 +84,7 @@ export default function MapGroupList({mapGroups}) {
           <Card key={index}>
             <CardHeader
               title={`${index + 1}번`}
-              action={<Button size={"small"} variant={"contained"} color={"primary"}>경로 재 설정</Button>}>
+              action={<Button size={"small"} variant={"contained"} color={"primary"}>경로 그리기</Button>}>
             </CardHeader>
 
             <ListItem>
@@ -81,24 +100,24 @@ export default function MapGroupList({mapGroups}) {
                 <Avatar
                   classes={{img: classes.avatar}}
                   alt={`Avatar n°${index + 1}`}
-                  src={`/images/makers/marker_${index}.png`}
+                  src={`/images/makers/marker_${index + 1}.png`}
                 />
               </ListItemAvatar>
               <ListItemText onClick={() => handleOpen(index)} classes={{secondary: classes.textSecondary}}
                             primary={`운행거리`}
-                            secondary={(mapGroup.sum / 1000).toFixed(1) + 'km'}/>
+                            secondary={(getTotalDistance(mapGroup) / 1000).toFixed(1) + 'km'}/>
               <ListItemText onClick={() => handleOpen(index)} classes={{secondary: classes.textSecondary}}
                             primary={`배송건수`}
-                            secondary={mapGroup.count + '건'}/>
+                            secondary={mapGroup.length -1 + '건'}/>
               <ListItemText onClick={() => handleOpen(index)} classes={{secondary: classes.textSecondary}}
                             primary={`배송금액`}
-                            secondary={getThousand(mapGroup.deguestPay) + '원'}/>
+                            secondary={getThousand(getOrderTotalPrice(mapGroup)) + '원'}/>
             </ListItem>
           </Card>
         );
       })}
 
-      {mapGroups.length > 0 ? <Index open={open} onClose={handleClose} orders={mapGroups[detailIndex].orders}/> : null}
+      {mapGroups.length > 0 ? <Index open={open} onClose={handleClose} mapGroup={mapGroups[detailIndex]}/> : null}
 
 
     </List>

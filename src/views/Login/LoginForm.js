@@ -96,7 +96,7 @@ function LoginForm({className, ...rest}) {
     const token = localStorage.getItem('token');
 
     if (token && logging) {
-      history.push('/reportSign');
+      history.push('/preview');
     } else {
       console.log('[LoginForm] useEffect');
     }

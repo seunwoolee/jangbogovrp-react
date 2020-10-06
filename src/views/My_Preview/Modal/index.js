@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -16,6 +16,8 @@ import {getTodoCount, isloading} from "../../../actions";
 import {APIKEY} from "../../../my_config";
 import globalAxios from "axios";
 import {useDispatch} from "react-redux";
+import {useHistory} from "react-router";
+import {Redirect} from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -36,6 +38,7 @@ const useStyles = makeStyles(() => ({
 
 function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess, setInfo}) {
   const today = moment().format('YYYY-MM-DD');
+  const history = useHistory();
   const [carCount, setCarCount] = useState('');
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -48,31 +51,20 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
 
     let response = await create_customer();
     if (response.status !== 200) {
+      dispatch(isloading(false));
       return onComplete(false, '수집 되지 않은 좌표가 있습니다');
     }
-
-
-    debugger
+    debugger;
 
     const invalidMutualDistanceCustomers = response.data;
     response = await getMutualDistanceByTmapRecursive(invalidMutualDistanceCustomers);
 
-
-    // response = await getMutualDistanceByTmapRecursive(isNotValidCustomers[0], allCustomers);
-
-    // if (isNotValidCustomers.length > 0) {
-    //   response = await getMutualDistanceRecursive(isNotValidCustomers, allCustomers);
-    // }
-
-    debugger
-
     response = await create_route();
     if (response.status !== 200) {
+      dispatch(isloading(false));
       return onComplete(false, '경로 생성 실패');
     }
-
-    dispatch(isloading(false));
-    return onComplete(true, '배차 완료');
+    return history.push('/route/' + String(response.data));
   };
 
   const create_route = async () => {
@@ -87,38 +79,6 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
     return await axios.post(url, data, config);
   }
 
-  // const getMutualDistanceRecursive = async (invalidMutualDistanceCustomers) => {
-  //     const invalidMutualDistanceCustomer = invalidMutualDistanceCustomers.pop();
-  //
-  //     if (invalidMutualDistanceCustomer === undefined) {
-  //       return;
-  //       // return fetchOrderData();
-  //     }
-  //
-  //
-  //     await getMutualDistanceByTmapRecursive(isNotValidCustomer, allCustomers.slice());
-  //
-  //     await timeout(3000);
-  //
-  //     await getMutualDistanceRecursive(isNotValidCustomers, allCustomers);
-  //
-  //   // return await getMutualDistanceByTmapRecursive(isNotValidCustomers[0], allCustomers);
-  //   // return await isNotValidCustomers.map(isNotValidCustomer => {
-  //   //   return getMutualDistanceByTmapRecursive(isNotValidCustomer, allCustomers.slice());
-  //   // })
-  //
-  //   //
-  //   // if (isNotValidCustomer === undefined) {
-  //   //   return;
-  //   //   // return fetchOrderData();
-  //   // }
-  //   //
-  //   // setTimeout(() => {
-  //   //   getMutualDistanceByTmapRecursive(isNotValidCustomer, allCustomers.slice());
-  //   //   getMutualDistanceRecursive(isNotValidCustomers, allCustomers);
-  //   // }, 2000)
-  // }
-
   const getMutualDistanceByTmapRecursive = async (invalidMutualDistanceCustomers: Array) => {
 
     const customer: Array = invalidMutualDistanceCustomers.pop();
@@ -127,27 +87,12 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
       return;
     }
 
-    await timeout(800);
+    await timeout(400);
 
     const response = await getMutualDistanceByTmap(customer[0], customer[1]);
     const totalDistance = response.data.features[0].properties.totalDistance;
     const jsonMap = JSON.stringify(response.data);
     await save(customer[0], customer[1], totalDistance, jsonMap);
-
-
-    // if (customer.customer_id !== isNotValidCustomer.customer_id) {
-    //   let response = null;
-    //   let totalDistance = 0;
-    //   let jsonMap = null;
-    //   response = await getMutualDistanceByTmap(isNotValidCustomer, customer);
-    //   totalDistance = response.data.features[0].properties.totalDistance;
-    //   jsonMap = JSON.stringify(response.data);
-    //   await save(isNotValidCustomer, customer, totalDistance, jsonMap);
-    //   response = await getMutualDistanceByTmap(customer, isNotValidCustomer);
-    //   totalDistance = response.data.features[0].properties.totalDistance;
-    //   jsonMap = JSON.stringify(response.data);
-    //   await save(customer, isNotValidCustomer, totalDistance, jsonMap);
-    // }
     await getMutualDistanceByTmapRecursive(invalidMutualDistanceCustomers);
 
   }

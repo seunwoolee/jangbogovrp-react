@@ -52,9 +52,16 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function Index({open, onClose, className, orders}) {
+function Index({open, onClose, className, mapGroup}) {
   const classes = useStyles();
-  // debugger;
+  const getOrderPrice = (orders) => {
+    let totalPrice = 0;
+    for (let i = 0; i < orders.length; i++) {
+      totalPrice += orders[i].price;
+    }
+    return totalPrice;
+  }
+
   return (
     <>
       <Modal
@@ -90,15 +97,16 @@ function Index({open, onClose, className, orders}) {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {orders.map((order) => (
-                        <Fragment key={order.vr_seq}>
-                          <TableRow>
-                            <TableCell align="center">{order.vr_vehicleNoIndex}</TableCell>
-                            <TableCell align="center">{order.vr_deguestName}</TableCell>
-                            <TableCell align="center">{order.vr_Juso}</TableCell>
-                            <TableCell align="center">{getThousand(order.vr_deguestPay)}원</TableCell>
-                          </TableRow>
-                        </Fragment>
+                      {mapGroup.map((row, index) => (
+                        mapGroup.length - 1 !== index ?
+                          <Fragment key={row.route_index}>
+                            <TableRow>
+                              <TableCell align="center">{row.route_index}</TableCell>
+                              <TableCell align="center">{row.customer_info.name}</TableCell>
+                              <TableCell align="center">{row.customer_info.address}</TableCell>
+                              <TableCell align="center">{getThousand(getOrderPrice(row.orders))}원</TableCell>
+                            </TableRow>
+                          </Fragment> : null
                       ))}
                     </TableBody>
                   </Table>
@@ -123,6 +131,7 @@ Index.propTypes = {
   className: PropTypes.string,
   onClose: PropTypes.func,
   open: PropTypes.bool,
+  mapGroup: PropTypes.array
 };
 
 

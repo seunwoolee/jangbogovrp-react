@@ -17,6 +17,7 @@ import axios from "../../utils/my_axios";
 import globalAxios from "axios"
 import {useDispatch} from "react-redux";
 import {APIKEY} from "../../my_config";
+import clsx from "clsx";
 
 const useStyles = makeStyles({
   root: {
@@ -26,6 +27,9 @@ const useStyles = makeStyles({
   tableRows: {
     cursor: "pointer"
   },
+  missingAddressRow: {
+    backgroundColor: '#e0e0e0'
+  }
 });
 
 
@@ -78,9 +82,6 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
             lon = coordinateInfo.newLon;
           }
           return saveToErp(geolocation.orderNumber, lat, lon);
-        })
-        .catch(error => {
-          debugger;
         })
       getGeolocationRecursive(geolocations);
     }, 200)
@@ -139,7 +140,8 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
                 </TableCell>
               </TableRow>
 
-              <TableRow className={classes.tableRows} hover
+              <TableRow hover className={clsx(classes.tableRows,
+                                        !(order.lon && order.lat) ? classes.missingAddressRow : null) }
                         onClick={() => order.lon && order.lat ? moveTo(order.lon, order.lat) : null}>
                 <TableCell align="center">
                   {order.id}
