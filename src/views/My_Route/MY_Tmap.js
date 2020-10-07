@@ -102,15 +102,14 @@ function MY_Tmap({geoDatas, map}) {
           convertPoint._lng);
         pointArr.push(convertChange);
       }
-      console.log(routeColor[Number(geoData.route_number)]);
-      new window.Tmapv2.Polyline({
-        path: pointArr,
-        strokeColor: `${routeColor[Number(geoData.route_number)]}`, // 라인 색상
-        strokeWeight: 3, // 라인 두께
-        strokeStyle: "solid", // 선의 종류
-        map: map // 지도 객체
-      });
-      debugger
+      // new window.Tmapv2.Polyline({
+      //   path: pointArr,
+      //   strokeColor: `${routeColor[Number(geoData.route_number)]}`, // 라인 색상
+      //   strokeWeight: 3, // 라인 두께
+      //   strokeStyle: "solid", // 선의 종류
+      //   map: map // 지도 객체
+      // });
+      // debugger
       // console.log(points);
       // // 경로들의 결과값들을 포인트 객체로 변환
       // const latlng = new window.Tmapv2.Point(

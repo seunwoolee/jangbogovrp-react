@@ -55,8 +55,9 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
         .then(res => {
           return res.data
         })
-        .then(geolocations => {
-          return getGeolocationRecursive(geolocations);
+        .then(missingAddressGeolocations => {
+          debugger;
+          return getGeolocationRecursive(missingAddressGeolocations);
         })
         .catch(err => {
           fetchOrderData();
@@ -64,39 +65,41 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
     }
   }
 
-  const getGeolocationRecursive = (geolocations) => {
-    const geolocation = geolocations.pop();
+  const getGeolocationRecursive = (missingAddressGeolocations) => {
+    const missingAddressGeolocation = missingAddressGeolocations.pop();
 
-    if (geolocation === undefined) {
+    if (missingAddressGeolocation === undefined) {
       return fetchOrderData();
     }
 
     setTimeout(() => {
-      getGeolocationByTmap(geolocation)
+      getGeolocationByTmap(missingAddressGeolocation)
         .then(response => {
           const coordinateInfo = response.data.coordinateInfo;
-          let lat = coordinateInfo.lat;
-          let lon = coordinateInfo.lon;
+          const coordinate = coordinateInfo.coordinate[0];
+          let lat = coordinate.lat;
+          let lon = coordinate.lon;
           if (lat === "" && lon === "") {
-            lat = coordinateInfo.newLat;
-            lon = coordinateInfo.newLon;
+            lat = coordinate.newLat;
+            lon = coordinate.newLon;
           }
-          return saveToErp(geolocation.orderNumber, lat, lon);
+          console.log(coordinate);
+          return saveToErp(missingAddressGeolocation.orderNumber, lat, lon);
         })
-      getGeolocationRecursive(geolocations);
+        .catch(err => {
+          console.log(missingAddressGeolocation);
+        })
+      getGeolocationRecursive(missingAddressGeolocations);
     }, 200)
   }
 
   const getGeolocationByTmap = async (geolocation) => {
     let params = {
-      city_do: geolocation.si,
-      gu_gun: geolocation.gu,
-      dong: `${geolocation.dong} ${geolocation.bun_ji} ${geolocation.detail}`,
-      addressFlag: "F00",
+      fullAddr: geolocation.address,
       coordType: "WGS84GEO",
       appKey: APIKEY,
     }
-    return await globalAxios.get("https://api2.sktelecom.com/tmap/geo/geocoding", {params: params})
+    return await globalAxios.get("https://apis.openapi.sk.com/tmap/geo/fullAddrGeo?version=1&format=json&callback=result", {params: params})
   }
 
   const saveToErp = async (orderNumber, lat, lon) => {
@@ -140,8 +143,8 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
                 </TableCell>
               </TableRow>
 
-              <TableRow hover className={clsx(classes.tableRows,
-                                        !(order.lon && order.lat) ? classes.missingAddressRow : null) }
+              <TableRow hover className={clsx(
+                classes.tableRows, !(order.lon && order.lat) ? classes.missingAddressRow : null) }
                         onClick={() => order.lon && order.lat ? moveTo(order.lon, order.lat) : null}>
                 <TableCell align="center">
                   {order.id}

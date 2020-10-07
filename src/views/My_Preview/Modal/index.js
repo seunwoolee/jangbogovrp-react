@@ -48,22 +48,22 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
 
   const onSubmit = async () => {
     dispatch(isloading(true));
+    let response = null;
 
-    let response = await create_customer();
-    if (response.status !== 200) {
+    try {
+      response = await create_customer();
+    } catch (error) {
       dispatch(isloading(false));
       return onComplete(false, '수집 되지 않은 좌표가 있습니다');
     }
-    debugger;
 
-    const invalidMutualDistanceCustomers = response.data;
-    response = await getMutualDistanceByTmapRecursive(invalidMutualDistanceCustomers);
-
-    response = await create_route();
-    if (response.status !== 200) {
+    try {
+      response = await create_route();
+    } catch (error) {
       dispatch(isloading(false));
-      return onComplete(false, '경로 생성 실패');
+      return onComplete(false, '경로 생성 실패, 개발팀 문의 바랍니다');
     }
+
     return history.push('/route/' + String(response.data));
   };
 
