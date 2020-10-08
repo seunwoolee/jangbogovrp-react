@@ -38,13 +38,17 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
   const dispatch = useDispatch();
 
   const moveTo = (lon, lat) => {
-    map.setCenter(new window.Tmap.LonLat(lon, lat).transform(pr_4326, pr_3857), 16);
+    // map.zoomIn();
+    map.setCenter(new window.Tmapv2.LatLng(lat, lon));
+    map.setZoom(17);
+    setTimeout(() => map.zoomOut(), 200);
+    // map.setCenter(new window.Tmap.LonLat(lon, lat).transform(pr_4326, pr_3857));
   }
 
   const saveGeolocationToErp = () => {
     if (window.confirm('좌표를 수집 하시겠습니까?')) {
       dispatch(isloading(true));
-      const url = "customer/pre_processing_geolocations/";
+      const url = "customer/preview_order/";
       const config = {
         headers: {Authorization: `Token ${localStorage.getItem('token')}`},
         params: {isAm: isAm}
@@ -56,7 +60,6 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
           return res.data
         })
         .then(missingAddressGeolocations => {
-          debugger;
           return getGeolocationRecursive(missingAddressGeolocations);
         })
         .catch(err => {
@@ -83,7 +86,6 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
             lat = coordinate.newLat;
             lon = coordinate.newLon;
           }
-          console.log(coordinate);
           return saveToErp(missingAddressGeolocation.orderNumber, lat, lon);
         })
         .catch(err => {

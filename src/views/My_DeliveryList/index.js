@@ -35,7 +35,6 @@ function DeliveryList() {
   const history = useHistory();
   const dispatch = useDispatch();
   const [deliveryData, setDeliveryData] = useState([]);
-  const [map, setMap] = useState(null);
   const [inputDateValues, setInputDateValues] = useState({...initialValues});
   const [isAm, setIsAm] = useState(true);
 
@@ -55,10 +54,8 @@ function DeliveryList() {
     axios.get(url, config)
       .then(res => {
         dispatch(isloading(false));
-        debugger;
         setDeliveryData(res.data);
       })
-      // eslint-disable-next-line no-unused-vars
       .catch(err => dispatch(isloading(false)));
   };
 

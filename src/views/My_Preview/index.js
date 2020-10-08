@@ -4,15 +4,15 @@ import {Container} from '@material-ui/core';
 import Page from 'src/components/Page';
 import {useDispatch, useSelector} from "react-redux";
 import {useHistory, useLocation} from "react-router";
+import Grid from "@material-ui/core/Grid";
+import moment from "moment";
 import axios from "../../utils/my_axios";
 
 import Header from './Header';
 import {isloading} from "../../actions";
-import Grid from "@material-ui/core/Grid";
 import Result from "./Result";
 import LoadingBar from "../../components/MY_LoadingBar";
 import MY_Tmap from "./MY_Tmap";
-import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,7 +38,7 @@ function Preview() {
     const url = "customer/preview_order/";
     const config = {
       headers: {Authorization: `Token ${localStorage.getItem('token')}`},
-      params: {isAm: isAm, today: moment().format('YYYY-MM-DD')}
+      params: {isAm, today: moment().format('YYYY-MM-DD')}
     };
 
     dispatch(isloading(true));
@@ -59,24 +59,23 @@ function Preview() {
   }, []);
 
   useEffect(() => {
-    fetchOrderData()
-    if (map !== null) {
-      map.destroy();
-    }
+    fetchOrderData();
+    // if (map !== null) {
+    //   map.destroy();
+    // }
     setMap(null);
   }, [isAm]);
 
   useEffect(() => {
     if (map === null) {
-      setMap(new window.Tmap.Map({
-        div: "myTmap",
+      setMap(new window.Tmapv2.Map("myTmap", {
         height: '750px',
         transitionEffect: "resize",
-        animation: true
+        animation: true,
+        zoom: 12
       }));
     }
   }, [orderData]);
-
 
   return (
     <Page
@@ -93,7 +92,8 @@ function Preview() {
         <Header
           isAm={isAm}
           openModal={openModal}
-          setOpenModal={setOpenModal} />
+          setOpenModal={setOpenModal}
+        />
         <Grid container spacing={1}>
           <Grid item xs={12} lg={9}>
             {/* eslint-disable-next-line react/jsx-pascal-case */}
