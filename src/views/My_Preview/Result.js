@@ -38,11 +38,9 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
   const dispatch = useDispatch();
 
   const moveTo = (lon, lat) => {
-    // map.zoomIn();
     map.setCenter(new window.Tmapv2.LatLng(lat, lon));
     map.setZoom(17);
     setTimeout(() => map.zoomOut(), 200);
-    // map.setCenter(new window.Tmap.LonLat(lon, lat).transform(pr_4326, pr_3857));
   }
 
   const saveGeolocationToErp = () => {

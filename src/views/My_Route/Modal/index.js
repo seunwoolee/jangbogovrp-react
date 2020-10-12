@@ -49,10 +49,13 @@ const useStyles = makeStyles((theme) => ({
   },
   actions: {
     justifyContent: 'flex-end'
+  },
+  tableRow: {
+    cursor: "pointer"
   }
 }));
 
-function Index({open, onClose, className, mapGroup}) {
+function Index({open, onClose, className, mapGroup, moveTo}) {
   const classes = useStyles();
   const getOrderPrice = (orders) => {
     let totalPrice = 0;
@@ -61,6 +64,8 @@ function Index({open, onClose, className, mapGroup}) {
     }
     return totalPrice;
   }
+
+  // 클릭 시 moveTo
 
   return (
     <>
@@ -100,7 +105,7 @@ function Index({open, onClose, className, mapGroup}) {
                       {mapGroup.map((row, index) => (
                         mapGroup.length - 1 !== index ?
                           <Fragment key={row.route_index}>
-                            <TableRow>
+                            <TableRow className={classes.tableRow} hover onClick={() => moveTo(row.customer_info.longitude, row.customer_info.latitude)}>
                               <TableCell align="center">{row.route_index}</TableCell>
                               <TableCell align="center">{row.customer_info.name}</TableCell>
                               <TableCell align="center">{row.customer_info.address}</TableCell>
@@ -130,6 +135,7 @@ function Index({open, onClose, className, mapGroup}) {
 Index.propTypes = {
   className: PropTypes.string,
   onClose: PropTypes.func,
+  moveTo: PropTypes.func,
   open: PropTypes.bool,
   mapGroup: PropTypes.array
 };

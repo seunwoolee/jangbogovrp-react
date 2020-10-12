@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {makeStyles} from '@material-ui/styles';
-import {composeWithDevTools} from "redux-devtools-extension";
+import DialogIndex from "./Dialog";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -59,7 +59,8 @@ export const routeColor = [
   "#0100FF",
   "#A09323",
   "#FFE400",
-  "#0054FF",
+  "#FFFF6C",
+  // "#0054FF",
   "#5F00FF",
   "#FF00DD",
   "#000000",
@@ -73,80 +74,109 @@ export const routeColor = [
   "#FF9090",
   "#FFFF6C"];
 
-function MY_Tmap({geoDatas, groupGeoDatas, groupMarkers, groupLines, map}) {
+
+function MY_Tmap({geoDatas, groupGeoDatas, groupMarkers, setGroupMarkers, groupLines, setGroupLines, map}) {
   const classes = useStyles();
   const startLon = 128.539506;
   const startLat = 35.929894;
+  const [open, setOpen] = React.useState(false);
+  const [selectedGeoData, setSelectedGeoData] = React.useState([]);
 
-  // const onMakerClicked = (marker, geoDataId) => {
-  //   marker.addListener('click', function (evt) {
-  //     const geoData = geoDatas.find(geodata => geodata.id === geoDataId);
-  //     console.log(groupLines);
-  //     for (let i = 0; i < groupLines.length; i++) {
-  //       groupLines[i].setVisible(false);
-  //     }
-  //
-  //     debugger;
-  //     //  open modal
-  //   });
-  // }
-  //
-  // const drawMarker = (groupGeoData: Array) => {
-  //   for (let i = 0; i < groupGeoData.length; i++) {
-  //     const htmlIcon = createHtmlicon(groupGeoData[i].route_number, String(groupGeoData[i].route_index));
-  //     const marker = new window.Tmapv2.Marker({
-  //       iconHTML: htmlIcon,
-  //       iconSize: new window.Tmapv2.Size(26, 38),
-  //       position: new window.Tmapv2.LatLng(groupGeoData[i].customer_info.latitude, groupGeoData[i].customer_info.longitude),
-  //       map: map
-  //     });
-  //     onMakerClicked(marker, groupGeoData[i].id);
-  //
-  //   }
-  //
-  // const drawLine = (groupGeoData: Array) => {
-  //   const groupLine = [];
-  //   for (let i = 0; i < groupGeoData.length; i++) {
-  //     const latLng = new window.Tmapv2.LatLng(
-  //       groupGeoData[i].customer_info.latitude,
-  //       groupGeoData[i].customer_info.longitude)
-  //     groupLine.push(latLng);
-  //   }
-  //
-  //   const line = new window.Tmapv2.Polyline({
-  //     path: groupLine,
-  //     fillColor: routeColor[groupGeoData[0].route_number],
-  //     strokeColor: routeColor[groupGeoData[0].route_number],
-  //     outlineColor: routeColor[groupGeoData[0].route_number],
-  //     strokeWeight: 3, // 라인 두께
-  //     strokeStyle: "solid", // 선의 종류
-  //     map: map // 지도 객체
-  //   });
-  //
-  //   groupLines.push(line);
-  // };
-  //
-  // if (map && geoDatas.length > 0) {
-  //   drawStartMaker(map, startLat, startLon);
-  //   for (let i = 0; i < groupGeoDatas.length; i++) {
-  //     drawMarker(groupGeoDatas[i]);
-  //   }
-  //   for (let i = 0; i < groupGeoDatas.length; i++) {
-  //     drawLine(groupGeoDatas[i]);
-  //   }
-  //   map.setCenter(new window.Tmapv2.LatLng(startLat, startLon));
-  // }
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const onMakerClicked = (marker, geoDataId) => {
+    marker.addListener('click', function (evt) {
+      handleClickOpen();
+      const geoData = geoDatas.find(geodata => geodata.id === geoDataId);
+      const selectedGeoDatas = geoDatas.filter(geodata =>
+        geodata.customer_info.latitude === geoData.customer_info.latitude &&
+        geodata.customer_info.longitude === geoData.customer_info.longitude)
+      // console.log(selectedGeoDatas);
+      setSelectedGeoData(selectedGeoDatas);
+
+    });
+  }
+
+  const drawMarker = (_groupMarkers: Array, groupGeoData: Array) => {
+    const groupMarker = [];
+    for (let i = 0; i < groupGeoData.length; i++) {
+      const htmlIcon = createHtmlicon(groupGeoData[i].route_number, String(groupGeoData[i].route_index));
+      const marker = new window.Tmapv2.Marker({
+        iconHTML: htmlIcon,
+        iconSize: new window.Tmapv2.Size(26, 38),
+        position: new window.Tmapv2.LatLng(groupGeoData[i].customer_info.latitude, groupGeoData[i].customer_info.longitude),
+        map: map
+      });
+      onMakerClicked(marker, groupGeoData[i].id);
+      groupMarker.push(marker);
+    }
+    _groupMarkers.push(groupMarker);
+  }
+
+  const drawLine = (_groupLines: Array, groupGeoData: Array) => {
+    const groupLine = [];
+    for (let i = 0; i < groupGeoData.length; i++) {
+      const latLng = new window.Tmapv2.LatLng(
+        groupGeoData[i].customer_info.latitude,
+        groupGeoData[i].customer_info.longitude)
+      groupLine.push(latLng);
+    }
+
+    const line = new window.Tmapv2.Polyline({
+      path: groupLine,
+      fillColor: routeColor[groupGeoData[0].route_number],
+      strokeColor: routeColor[groupGeoData[0].route_number],
+      outlineColor: routeColor[groupGeoData[0].route_number],
+      strokeWeight: 3, // 라인 두께
+      strokeStyle: "solid", // 선의 종류
+      map: map // 지도 객체
+    });
+
+    _groupLines.push(line);
+  };
+
+  useEffect(() => {
+    if (groupGeoDatas.length > 1) {
+      const _groupMarkers = [];
+      const _groupLines = [];
+
+      drawStartMaker(map, startLat, startLon);
+      for (let i = 0; i < groupGeoDatas.length; i++) {
+        drawMarker(_groupMarkers, groupGeoDatas[i]);
+      }
+      for (let i = 0; i < groupGeoDatas.length; i++) {
+        drawLine(_groupLines, groupGeoDatas[i]);
+      }
+      setGroupLines(_groupLines);
+      setGroupMarkers(_groupMarkers);
+
+      map.setCenter(new window.Tmapv2.LatLng(startLat, startLon));
+    }
+  }, [geoDatas])
+
 
   return (
-    <div className={classes.root} id="myTmap"/>
+    <>
+      <div className={classes.root} id="myTmap"/>
+      <DialogIndex onClose={handleClose} open={open} geoDatas={selectedGeoData} maxRouteNumber={groupMarkers.length}/>
+    </>
   );
+
 }
 
 MY_Tmap.propTypes = {
   geoDatas: PropTypes.array,
   groupGeoDatas: PropTypes.array,
   groupMarkers: PropTypes.array,
+  setGroupMarkers: PropTypes.func,
   groupLines: PropTypes.array,
+  setGroupLines: PropTypes.func,
   map: PropTypes.object,
 };
 

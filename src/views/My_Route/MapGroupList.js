@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
   },
+  avatarRoot: {
+    width: "auto"
+  },
   avatar: {
     width: '26px',
     height: '37px',
@@ -29,9 +32,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MapGroupList({mapGroups}) {
+
+export default function MapGroupList({mapGroups, checked, setChecked, moveTo}) {
   const classes = useStyles();
-  const [checked, setChecked] = useState([1]);
   const [open, setOpen] = useState(false);
   const [detailIndex, setDetailIndex] = useState(0);
 
@@ -98,7 +101,7 @@ export default function MapGroupList({mapGroups}) {
               </ListItemIcon>
               <ListItemAvatar>
                 <Avatar
-                  classes={{img: classes.avatar}}
+                  classes={{root: classes.avatarRoot, img: classes.avatar}}
                   alt={`Avatar n°${index + 1}`}
                   src={`/images/makers/marker_${index + 1}.png`}
                 />
@@ -108,7 +111,7 @@ export default function MapGroupList({mapGroups}) {
                             secondary={(getTotalDistance(mapGroup) / 1000).toFixed(1) + 'km'}/>
               <ListItemText onClick={() => handleOpen(index)} classes={{secondary: classes.textSecondary}}
                             primary={`배송건수`}
-                            secondary={mapGroup.length -1 + '건'}/>
+                            secondary={mapGroup.length - 1 + '건'}/>
               <ListItemText onClick={() => handleOpen(index)} classes={{secondary: classes.textSecondary}}
                             primary={`배송금액`}
                             secondary={getThousand(getOrderTotalPrice(mapGroup)) + '원'}/>
@@ -117,7 +120,8 @@ export default function MapGroupList({mapGroups}) {
         );
       })}
 
-      {mapGroups.length > 0 ? <Index open={open} onClose={handleClose} mapGroup={mapGroups[detailIndex]}/> : null}
+      {mapGroups.length > 0 ?
+        <Index open={open} onClose={handleClose} mapGroup={mapGroups[detailIndex]} moveTo={moveTo}/> : null}
 
 
     </List>
@@ -126,4 +130,7 @@ export default function MapGroupList({mapGroups}) {
 
 MapGroupList.propTypes = {
   mapGroups: PropTypes.array,
+  checked: PropTypes.array,
+  setChecked: PropTypes.func,
+  moveTo: PropTypes.func
 };

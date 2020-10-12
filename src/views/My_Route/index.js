@@ -30,9 +30,9 @@ function MY_Route() {
   const param = useParams();
   const [map, setMap] = useState(null);
   const [geoDatas, setGeoDatas] = useState([]);
+  const [groupMarkers, setGroupMarkers] = useState([]);
+  const [groupLines, setGroupLines] = useState([]);
   const mapGroups = [[]];
-  const groupMarkers = [];
-  const groupLines = [];
   let currentGroupIndex = 0;
 
   const fetchRoute = async () => {
@@ -63,13 +63,15 @@ function MY_Route() {
   }, []);
 
   useEffect(() => {
-    setMap(new window.Tmapv2.Map("myTmap",{
+    setMap(new window.Tmapv2.Map("myTmap", {
       height: '750px',
       transitionEffect: "resize",
       animation: true,
       zoom: 12
     }));
   }, []);
+
+  console.log(map, geoDatas);
 
   for (let i = 0; i < geoDatas.length; i++) {
     if (currentGroupIndex !== geoDatas[i].route_number - 1) {
@@ -95,15 +97,21 @@ function MY_Route() {
         <Header/>
         <Grid container spacing={1}>
           <Grid item xs={12} lg={9}>
-            {/*<MY_Tmap*/}
-            {/*  geoDatas={geoDatas}*/}
-            {/*  groupGeoDatas={mapGroups}*/}
-            {/*  groupMarkers={groupMarkers}*/}
-            {/*  groupLines={groupLines}*/}
-            {/*  map={map}/>*/}
+            <MY_Tmap
+              geoDatas={geoDatas}
+              groupGeoDatas={mapGroups}
+              groupMarkers={groupMarkers}
+              setGroupMarkers={setGroupMarkers}
+              groupLines={groupLines}
+              setGroupLines={setGroupLines}
+              map={map}/>
           </Grid>
           <Grid item xs={12} lg={3}>
-            {mapGroups.length > 1 ? <Result mapGroups={mapGroups} map={map}/> : null}
+            {groupMarkers.length > 1 ? <Result
+              mapGroups={mapGroups}
+              groupLines={groupLines}
+              groupMarkers={groupMarkers}
+              map={map}/> : null}
           </Grid>
         </Grid>
       </Container>
