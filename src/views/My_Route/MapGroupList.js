@@ -111,7 +111,7 @@ export default function MapGroupList({mapGroups, checked, setChecked, moveTo}) {
                             secondary={(getTotalDistance(mapGroup) / 1000).toFixed(1) + 'km'}/>
               <ListItemText onClick={() => handleOpen(index)} classes={{secondary: classes.textSecondary}}
                             primary={`배송건수`}
-                            secondary={mapGroup.length - 1 + '건'}/>
+                            secondary={mapGroup.length + '건'}/>
               <ListItemText onClick={() => handleOpen(index)} classes={{secondary: classes.textSecondary}}
                             primary={`배송금액`}
                             secondary={getThousand(getOrderTotalPrice(mapGroup)) + '원'}/>

@@ -102,16 +102,16 @@ function Index({open, onClose, className, mapGroup, moveTo}) {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {mapGroup.map((row, index) => (
-                        mapGroup.length - 1 !== index ?
-                          <Fragment key={row.route_index}>
-                            <TableRow className={classes.tableRow} hover onClick={() => moveTo(row.customer_info.longitude, row.customer_info.latitude)}>
-                              <TableCell align="center">{row.route_index}</TableCell>
-                              <TableCell align="center">{row.customer_info.name}</TableCell>
-                              <TableCell align="center">{row.customer_info.address}</TableCell>
-                              <TableCell align="center">{getThousand(getOrderPrice(row.orders))}원</TableCell>
-                            </TableRow>
-                          </Fragment> : null
+                      {mapGroup.sort((a, b) => a.route_index - b.route_index).map((row, index) => (
+                        <Fragment key={row.route_index}>
+                          <TableRow className={classes.tableRow} hover
+                                    onClick={() => moveTo(row.customer_info.longitude, row.customer_info.latitude)}>
+                            <TableCell align="center">{row.route_index}</TableCell>
+                            <TableCell align="center">{row.customer_info.name}</TableCell>
+                            <TableCell align="center">{row.customer_info.address}</TableCell>
+                            <TableCell align="center">{getThousand(getOrderPrice(row.orders))}원</TableCell>
+                          </TableRow>
+                        </Fragment>
                       ))}
                     </TableBody>
                   </Table>

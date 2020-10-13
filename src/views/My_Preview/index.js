@@ -29,6 +29,7 @@ function Preview() {
   const history = useHistory();
   const dispatch = useDispatch();
   const [orderData, setOrderData] = useState([]);
+  const [markers, setMarkers] = useState([]);
   const [map, setMap] = useState(null);
   const [isAm, setIsAm] = useState(true);
   const [openModal, setOpenModal] = useState(false);
@@ -55,27 +56,21 @@ function Preview() {
     if (!(localStorage.getItem('token'))) {
       history.push('/auth/login');
     }
+
+    setMap(new window.Tmapv2.Map("myTmap", {
+      height: '750px',
+      transitionEffect: "resize",
+      animation: true,
+      zoom: 12
+    }));
+
     fetchOrderData();
   }, []);
 
   useEffect(() => {
     fetchOrderData();
-    // if (map !== null) {
-    //   map.destroy();
-    // }
-    setMap(null);
   }, [isAm]);
 
-  useEffect(() => {
-    if (map === null) {
-      setMap(new window.Tmapv2.Map("myTmap", {
-        height: '750px',
-        transitionEffect: "resize",
-        animation: true,
-        zoom: 12
-      }));
-    }
-  }, [orderData]);
 
   return (
     <Page
@@ -97,7 +92,7 @@ function Preview() {
         <Grid container spacing={1}>
           <Grid item xs={12} lg={9}>
             {/* eslint-disable-next-line react/jsx-pascal-case */}
-            <MY_Tmap orders={orderData} map={map}/>
+            <MY_Tmap orders={orderData} map={map} markers={markers} setMarkers={setMarkers}/>
           </Grid>
           <Grid item xs={12} lg={3}>
             <Result orders={orderData} fetchOrderData={fetchOrderData} map={map} isAm={isAm} setIsAm={setIsAm}/>

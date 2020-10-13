@@ -75,7 +75,7 @@ export const routeColor = [
   "#FFFF6C"];
 
 
-function MY_Tmap({geoDatas, groupGeoDatas, groupMarkers, setGroupMarkers, groupLines, setGroupLines, map}) {
+function MY_Tmap({fetchRoute, geoDatas, groupGeoDatas, groupMarkers, setGroupMarkers, groupLines, setGroupLines, map}) {
   const classes = useStyles();
   const startLon = 128.539506;
   const startLat = 35.929894;
@@ -92,14 +92,12 @@ function MY_Tmap({geoDatas, groupGeoDatas, groupMarkers, setGroupMarkers, groupL
 
   const onMakerClicked = (marker, geoDataId) => {
     marker.addListener('click', function (evt) {
-      handleClickOpen();
       const geoData = geoDatas.find(geodata => geodata.id === geoDataId);
       const selectedGeoDatas = geoDatas.filter(geodata =>
         geodata.customer_info.latitude === geoData.customer_info.latitude &&
         geodata.customer_info.longitude === geoData.customer_info.longitude)
-      // console.log(selectedGeoDatas);
+      handleClickOpen();
       setSelectedGeoData(selectedGeoDatas);
-
     });
   }
 
@@ -141,8 +139,18 @@ function MY_Tmap({geoDatas, groupGeoDatas, groupMarkers, setGroupMarkers, groupL
     _groupLines.push(line);
   };
 
+  const destroyMarkersLines = () => {
+    for (let i = 0; i < groupMarkers.length; i++) {
+      for (let j = 0; j < groupMarkers[i].length; j++) {
+        groupMarkers[i][j].setMap(null);
+      }
+    }
+    groupLines.map(line => line.setMap(null));
+  }
+
   useEffect(() => {
     if (groupGeoDatas.length > 1) {
+      destroyMarkersLines();
       const _groupMarkers = [];
       const _groupLines = [];
 
@@ -153,24 +161,27 @@ function MY_Tmap({geoDatas, groupGeoDatas, groupMarkers, setGroupMarkers, groupL
       for (let i = 0; i < groupGeoDatas.length; i++) {
         drawLine(_groupLines, groupGeoDatas[i]);
       }
+
       setGroupLines(_groupLines);
       setGroupMarkers(_groupMarkers);
 
-      map.setCenter(new window.Tmapv2.LatLng(startLat, startLon));
+      // map.setCenter(new window.Tmapv2.LatLng(startLat, startLon));
     }
-  }, [geoDatas])
+  }, [groupGeoDatas])
 
 
   return (
     <>
       <div className={classes.root} id="myTmap"/>
-      <DialogIndex onClose={handleClose} open={open} geoDatas={selectedGeoData} maxRouteNumber={groupMarkers.length}/>
+      <DialogIndex fetchRoute={fetchRoute} onClose={handleClose} open={open} geoDatas={selectedGeoData}
+                   maxRouteNumber={groupMarkers.length}/>
     </>
   );
 
 }
 
 MY_Tmap.propTypes = {
+  fetchRoute: PropTypes.func,
   geoDatas: PropTypes.array,
   groupGeoDatas: PropTypes.array,
   groupMarkers: PropTypes.array,

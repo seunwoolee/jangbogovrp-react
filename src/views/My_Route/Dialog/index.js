@@ -23,6 +23,7 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import {getOrderTotalPrice} from "../MapGroupList";
+import axios from "../../../utils/my_axios";
 
 const useStyles = makeStyles((theme) => ({
   avatarRoot: {
@@ -45,10 +46,28 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function DialogIndex({open, onClose, geoDatas, maxRouteNumber}) {
+function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
   const classes = useStyles();
   const itemArr = [];
   const [newRouteNumber, setNewRouteNumber] = useState(1);
+
+  const handleSubmit = async () => {
+    await changeRouteNumber();
+    onClose();
+    fetchRoute();
+  }
+
+  const changeRouteNumber = async () => {
+    const config = {headers: {Authorization: `Token ${localStorage.getItem('token')}`}};
+    const url = "delivery/routeDManualUpdate/";
+    const data = {
+      route_m_id: geoDatas[0].route_m,
+      to_route_number: newRouteNumber,
+      from_route_number: geoDatas[0].route_number,
+      current_route_index: geoDatas[0].route_index,
+    };
+    return await axios.post(url, data, config);
+  }
 
   for (let i = 0; i < maxRouteNumber; i++) {
     itemArr.push(i);
@@ -62,7 +81,6 @@ function DialogIndex({open, onClose, geoDatas, maxRouteNumber}) {
 
   const handleChange = (event) => {
     setNewRouteNumber(event.target.value);
-    console.log(event.target.value)
   }
 
   const getOrderTotalPrice = (orders) => {
@@ -148,7 +166,7 @@ function DialogIndex({open, onClose, geoDatas, maxRouteNumber}) {
           <Button onClick={onClose} color="default" variant={"outlined"}>
             닫기
           </Button>
-          <Button onClick={onClose} color="secondary" variant={"outlined"}>
+          <Button onClick={handleSubmit} color="secondary" variant={"outlined"}>
             확인
           </Button>
         </DialogActions>
@@ -158,6 +176,7 @@ function DialogIndex({open, onClose, geoDatas, maxRouteNumber}) {
 }
 
 DialogIndex.propTypes = {
+  fetchRoute: PropTypes.func,
   open: PropTypes.bool,
   geoDatas: PropTypes.array,
   onClose: PropTypes.func,

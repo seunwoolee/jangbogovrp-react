@@ -7,9 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import PropTypes from "prop-types";
-import Header from "../Header";
 import moment from "moment";
-import Typography from "@material-ui/core/Typography";
 import {makeStyles} from "@material-ui/styles";
 import axios from "../../../utils/my_axios";
 import {getTodoCount, isloading} from "../../../actions";
@@ -17,7 +15,7 @@ import {APIKEY} from "../../../my_config";
 import globalAxios from "axios";
 import {useDispatch} from "react-redux";
 import {useHistory} from "react-router";
-import {Redirect} from "react-router-dom";
+import {startLat, startLon} from "../MY_Tmap";
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -36,12 +34,87 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
+
+export const create_routeOrder = async (routeM: number, routeNumber: number) => {
+  const url = "delivery/routeD/";
+  let params = {routeM: routeM, routeNumber: routeNumber};
+  let response = null;
+  const config = {
+    headers: {Authorization: `Token ${localStorage.getItem('token')}`},
+    params: params
+  };
+
+  response = await axios.get(url, config);
+  const rows = response.data;
+  const viaPoints = [];
+  for (let i = 0; i < rows.length; i++) {
+    const viaPoint = {};
+    viaPoint.viaPointId = String(rows[i].customer_info.id);
+    viaPoint.viaPointName = rows[i].customer_info.name;
+    viaPoint.viaX = rows[i].customer_info.longitude;
+    viaPoint.viaY = rows[i].customer_info.latitude;
+    viaPoints.push(viaPoint);
+  }
+
+  params = {
+    reqCoordType: "WGS84GEO",
+    resCoordType: "EPSG3857",
+    startName: "출발",
+    startX: String(startLon),
+    startY: String(startLat),
+    startTime: "201711121314",
+    endName: "도착",
+    endX: String(startLon),
+    endY: String(startLat),
+    searchOption: "0",
+    viaPoints: viaPoints,
+  }
+
+  try {
+    response = await globalAxios.post(
+      "https://apis.openapi.sk.com/tmap/routes/routeOptimization20?version=1&format=json",
+      params,
+      {headers: {appKey: APIKEY}}
+    );
+
+    const resultFeatures = response.data.features;
+    const newRouteOrders = [];
+    const jsonData = JSON.stringify(resultFeatures); // index가 0인 첫번째에 들어감
+    for (let i in resultFeatures) {
+      let geometry = resultFeatures[i].geometry;
+      let properties = resultFeatures[i].properties;
+
+      if (geometry.type === "Point") {
+        if (properties.viaPointId) {
+          const temp = {routeM: routeM, customerId: properties.viaPointId, index: properties.index};
+          if (properties.index === "1") {
+            temp.jsonData = jsonData;
+            console.log(temp);
+          }
+          newRouteOrders.push(temp);
+        }
+      }
+    }
+
+    for (let i in newRouteOrders) {
+      const url = "delivery/routeDUpdate/";
+      debugger;
+      await axios.patch(url, newRouteOrders[i], {headers: {Authorization: `Token ${localStorage.getItem('token')}`}})
+    }
+
+    console.log(newRouteOrders);
+  } catch (e) {
+    console.log(e)
+  }
+
+}
+
 function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess, setInfo}) {
   const today = moment().format('YYYY-MM-DD');
-  const history = useHistory();
   const [carCount, setCarCount] = useState('');
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const config = {headers: {Authorization: `Token ${localStorage.getItem('token')}`}};
   const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -64,8 +137,22 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
       return onComplete(false, '경로 생성 실패, 개발팀 문의 바랍니다');
     }
 
-    return history.push('/route/' + String(response.data));
+    const routeMId = response.data.route_m_id;
+    const maxRouteNumber = response.data.max_route_number;
+
+    try {
+      for (let i = 1; i <= maxRouteNumber; i++) {
+        await timeout(3000);
+        response = await create_routeOrder(routeMId, i);
+      }
+    } catch (error) {
+      dispatch(isloading(false));
+      return onComplete(false, 'Tmap 다중 경유지 생성 실패, 개발팀 문의 바랍니다.');
+    }
+
+    return history.push('/route/' + String(routeMId));
   };
+
 
   const create_route = async () => {
     const url = "core/create_route/";
@@ -79,55 +166,6 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
     return await axios.post(url, data, config);
   }
 
-  const getMutualDistanceByTmapRecursive = async (invalidMutualDistanceCustomers: Array) => {
-
-    const customer: Array = invalidMutualDistanceCustomers.pop();
-
-    if (customer === undefined) {
-      return;
-    }
-
-    await timeout(400);
-
-    const response = await getMutualDistanceByTmap(customer[0], customer[1]);
-    const totalDistance = response.data.features[0].properties.totalDistance;
-    const jsonMap = JSON.stringify(response.data);
-    await save(customer[0], customer[1], totalDistance, jsonMap);
-    await getMutualDistanceByTmapRecursive(invalidMutualDistanceCustomers);
-
-  }
-
-  const getMutualDistanceByTmap = async (start: Object, end: Object) => {
-    let params = {
-      startName: '출발지',
-      startX: start.lon,
-      startY: start.lat,
-      endName: '도착지',
-      endX: end.lon,
-      endY: end.lat,
-
-      roadType: 16,
-      directionOption: 0,
-      resCoordType: 'EPSG3857',
-      reqCoordType: 'WGS84GEO',
-      searchOption: '10',
-      appKey: APIKEY,
-
-    }
-    return await globalAxios.get("https://api2.sktelecom.com/tmap/routes", {params: params})
-  }
-
-
-  const save = async (start, end, distance, jsonMap) => {
-    const url = "customer/save_mutual_distance/";
-    const data = {
-      start: start.customer_id,
-      end: end.customer_id,
-      distance: distance,
-      jsonMap: jsonMap,
-    };
-    return await axios.post(url, data, config);
-  }
 
   return (
     <div>

@@ -12,6 +12,7 @@ import Grid from "@material-ui/core/Grid";
 import Result from "./Result";
 import LoadingBar from "../../components/MY_LoadingBar";
 import MY_Tmap from "./MY_Tmap";
+import {startLat, startLon} from "../My_Preview/MY_Tmap";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,8 +33,7 @@ function MY_Route() {
   const [geoDatas, setGeoDatas] = useState([]);
   const [groupMarkers, setGroupMarkers] = useState([]);
   const [groupLines, setGroupLines] = useState([]);
-  const mapGroups = [[]];
-  let currentGroupIndex = 0;
+  const [mapGroups, setMapGroups] = useState([[]]);
 
   const fetchRoute = async () => {
     const routeM = param.id;
@@ -46,9 +46,20 @@ function MY_Route() {
     const response = await getRoute("delivery/maps/", config);
     dispatch(isloading(false));
 
-    if (response.status === 200) {
-      setGeoDatas(response.data.route_d);
+
+    const _mapGroups = [[]];
+    let currentGroupIndex = 0;
+    for (let i = 0; i < response.data.route_d.length; i++) {
+      if (currentGroupIndex !== response.data.route_d[i].route_number - 1) {
+        ++currentGroupIndex;
+        _mapGroups.push([]);
+      }
+
+      _mapGroups[currentGroupIndex].push(response.data.route_d[i]);
     }
+    setGeoDatas(response.data.route_d);
+    setMapGroups(_mapGroups);
+
   };
 
   const getRoute = async (url, config) => {
@@ -64,6 +75,7 @@ function MY_Route() {
 
   useEffect(() => {
     setMap(new window.Tmapv2.Map("myTmap", {
+      center: new window.Tmapv2.LatLng(startLat, startLon),
       height: '750px',
       transitionEffect: "resize",
       animation: true,
@@ -71,16 +83,6 @@ function MY_Route() {
     }));
   }, []);
 
-  console.log(map, geoDatas);
-
-  for (let i = 0; i < geoDatas.length; i++) {
-    if (currentGroupIndex !== geoDatas[i].route_number - 1) {
-      ++currentGroupIndex;
-      mapGroups.push([]);
-    }
-
-    mapGroups[currentGroupIndex].push(geoDatas[i]);
-  }
 
   return (
     <Page
@@ -98,6 +100,7 @@ function MY_Route() {
         <Grid container spacing={1}>
           <Grid item xs={12} lg={9}>
             <MY_Tmap
+              fetchRoute={fetchRoute}
               geoDatas={geoDatas}
               groupGeoDatas={mapGroups}
               groupMarkers={groupMarkers}
