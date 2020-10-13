@@ -47,16 +47,26 @@ function MY_Route() {
     dispatch(isloading(false));
 
 
-    const _mapGroups = [[]];
-    let currentGroupIndex = 1;
-    for (let i = 0; i < response.data.route_d.length; i++) {
-      if (currentGroupIndex !== response.data.route_d[i].route_number) {
-        currentGroupIndex = response.data.route_d[i].route_number;
-        _mapGroups.push([]);
-      }
+    const _mapGroups = [];
+    const maxRouteNumber = Math.max(...response.data.route_d.map(d => d.route_number));
 
-      _mapGroups[_mapGroups.length - 1].push(response.data.route_d[i]);
+    for (let i = 0; i < maxRouteNumber; i++) {
+      _mapGroups.push([]);
     }
+
+    for (let i = 0; i < response.data.route_d.length; i++) {
+      _mapGroups[response.data.route_d[i].route_number - 1].push(response.data.route_d[i]);
+    }
+
+    // let currentGroupIndex = 1;
+    // for (let i = 0; i < response.data.route_d.length; i++) {
+    //   if (currentGroupIndex !== response.data.route_d[i].route_number) {
+    //     currentGroupIndex = response.data.route_d[i].route_number;
+    //     _mapGroups.push([]);
+    //   }
+    //
+    //   _mapGroups[_mapGroups.length - 1].push(response.data.route_d[i]);
+    // }
     setGeoDatas(response.data.route_d);
     setMapGroups(_mapGroups);
 

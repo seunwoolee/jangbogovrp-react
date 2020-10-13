@@ -81,6 +81,7 @@ export default function Result({fetchRoute, mapGroups, groupLines, groupMarkers,
       for (let j = 0; j < groupMarkers[checked[i]].length; j++) {
         groupMarkers[checked[i]][j].setVisible(true);
       }
+
       for (let j = 0; j < groupLines[checked[i]].length; j++) {
         groupLines[checked[i]][j].setVisible(true);
       }

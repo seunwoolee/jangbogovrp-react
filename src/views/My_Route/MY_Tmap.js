@@ -129,7 +129,6 @@ function MY_Tmap({fetchRoute, geoDatas, groupGeoDatas, groupMarkers, setGroupMar
           const convertChange = new window.Tmapv2.LatLng(convertPoint._lat, convertPoint._lng);
           _groupLine.push(convertChange);
         }
-        console.log(_groupLines);
         const line = new window.Tmapv2.Polyline({
           path: _groupLine,
           fillColor: routeColor[jsonGeoData.route_number], // _groupLines.length
@@ -168,14 +167,18 @@ function MY_Tmap({fetchRoute, geoDatas, groupGeoDatas, groupMarkers, setGroupMar
       for (let i = 0; i < groupGeoDatas.length; i++) {
         drawMarker(_groupMarkers, groupGeoDatas[i]);
       }
-      const jsonGeoDatas = geoDatas.filter(geoData => geoData.json_map !== null);
-      for (let i = 0; i < jsonGeoDatas.length; i++) {
-        drawLine(_groupLines, jsonGeoDatas[i]);
+
+      for (let i = 0; i < groupGeoDatas.length; i++) {
+        const jsonGeoData = groupGeoDatas[i].find(geoData => geoData.json_map !== null);
+        if (jsonGeoData === undefined) {
+          _groupLines.push([]);
+          continue;
+        }
+        drawLine(_groupLines, jsonGeoData);
       }
 
       setGroupLines(_groupLines);
       setGroupMarkers(_groupMarkers);
-      debugger;
     }
   }, [groupGeoDatas])
 

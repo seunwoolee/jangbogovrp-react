@@ -127,7 +127,8 @@ export default function MapGroupList({reDraw, mapGroups, checked, setChecked, mo
                 <Avatar
                   classes={{root: classes.avatarRoot, img: classes.avatar}}
                   alt={`Avatar n°${index + 1}`}
-                  src={`/images/makers/marker_${mapGroup[0].route_number}.png`}
+                  // src={`/images/makers/marker_${mapGroup[0].route_number}.png`}
+                  src={`/images/makers/marker_${index + 1}.png`}
                 />
               </ListItemAvatar>
               <ListItemText onClick={() => handleOpen(index)} classes={{secondary: classes.textSecondary}}
