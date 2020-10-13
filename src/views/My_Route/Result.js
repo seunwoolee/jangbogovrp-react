@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 });
 
 
-export default function Result({mapGroups, groupLines, groupMarkers, map}) {
+export default function Result({fetchRoute, mapGroups, groupLines, groupMarkers, map}) {
   const classes = useStyles();
   const [lineVisible, setLineVisible] = useState(true);
   const [allVisible, setAllVisible] = useState(true);
@@ -41,9 +41,7 @@ export default function Result({mapGroups, groupLines, groupMarkers, map}) {
   }
 
   const setInvisibleAll = () => {
-    debugger;
     for (let i = 0; i < groupLines.length; i++) {
-      // groupLines[i].setVisible(false);
       for (let j = 0; j < groupMarkers[i].length; j++) {
         groupMarkers[i][j].setVisible(false);
       }
@@ -120,12 +118,13 @@ export default function Result({mapGroups, groupLines, groupMarkers, map}) {
               {lineVisible ? '경로선 제거' : '경로선 표시'}
             </Button>
           </>}/>
-      <MapGroupList mapGroups={mapGroups} checked={checked} setChecked={setChecked} moveTo={moveTo}/>
+      <MapGroupList reDraw={fetchRoute} mapGroups={mapGroups} checked={checked} setChecked={setChecked} moveTo={moveTo}/>
     </Paper>
   );
 }
 
 Result.propTypes = {
+  fetchRoute: PropTypes.func,
   mapGroups: PropTypes.array,
   groupMarkers: PropTypes.array,
   groupLines: PropTypes.array,

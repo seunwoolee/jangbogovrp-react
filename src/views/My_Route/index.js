@@ -113,6 +113,7 @@ function MY_Route() {
           </Grid>
           <Grid item xs={12} lg={3}>
             {groupMarkers.length > 1 ? <Result
+              fetchRoute={fetchRoute}
               mapGroups={mapGroups}
               groupLines={groupLines}
               groupMarkers={groupMarkers}

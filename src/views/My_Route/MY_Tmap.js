@@ -129,9 +129,10 @@ function MY_Tmap({fetchRoute, geoDatas, groupGeoDatas, groupMarkers, setGroupMar
           const convertChange = new window.Tmapv2.LatLng(convertPoint._lat, convertPoint._lng);
           _groupLine.push(convertChange);
         }
+        console.log(_groupLines);
         const line = new window.Tmapv2.Polyline({
           path: _groupLine,
-          fillColor: routeColor[jsonGeoData.route_number],
+          fillColor: routeColor[jsonGeoData.route_number], // _groupLines.length
           strokeColor: routeColor[jsonGeoData.route_number],
           outlineColor: routeColor[jsonGeoData.route_number],
           strokeWeight: 4, // 라인 두께
@@ -150,7 +151,11 @@ function MY_Tmap({fetchRoute, geoDatas, groupGeoDatas, groupMarkers, setGroupMar
         groupMarkers[i][j].setMap(null);
       }
     }
-    groupLines.map(line => line.setMap(null));
+    for (let i = 0; i < groupLines.length; i++) {
+      for (let j = 0; j < groupLines[i].length; j++) {
+        groupLines[i][j].setMap(null);
+      }
+    }
   }
 
   useEffect(() => {

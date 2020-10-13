@@ -98,7 +98,6 @@ export const create_routeOrder = async (routeM: number, routeNumber: number) => 
 
     for (let i in newRouteOrders) {
       const url = "delivery/routeDUpdate/";
-      debugger;
       await axios.patch(url, newRouteOrders[i], {headers: {Authorization: `Token ${localStorage.getItem('token')}`}})
     }
 

@@ -13,6 +13,11 @@ import {Button, Card, CardHeader, colors, ListItemIcon} from "@material-ui/core"
 import getThousand from "../../utils/getThousand";
 import TableCell from "@material-ui/core/TableCell";
 import Index from "./Modal";
+import {create_routeOrder} from "../My_Preview/Modal";
+import LoadingBar from "../../components/MY_LoadingBar";
+import Page from "../../components/Page";
+import {useDispatch} from "react-redux";
+import {isloading} from "../../actions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,10 +38,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function MapGroupList({mapGroups, checked, setChecked, moveTo}) {
+export default function MapGroupList({reDraw, mapGroups, checked, setChecked, moveTo}) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [detailIndex, setDetailIndex] = useState(0);
+  const dispatch = useDispatch();
+
+  const handleRedraw = async (routeM, routeNumber) => {
+    if (window.confirm('경로를 다시 그리겠습니까?')) {
+      dispatch(isloading(true));
+      const response = await create_routeOrder(routeM, routeNumber);
+      dispatch(isloading(false));
+      return reDraw();
+    }
+  }
 
   const handleClose = () => {
     setOpen(false);
@@ -81,13 +96,22 @@ export default function MapGroupList({mapGroups, checked, setChecked, moveTo}) {
 
   return (
     <List dense className={classes.root}>
+
+      <LoadingBar/>
+
       {mapGroups.map((mapGroup, index) => {
         const labelId = `checkbox-list-secondary-label-${index}`;
         return (
           <Card key={index}>
             <CardHeader
               title={`${index + 1}번`}
-              action={<Button size={"small"} variant={"contained"} color={"primary"}>경로 그리기</Button>}>
+              action={
+                <Button size={"small"}
+                        variant={"contained"}
+                        color={"primary"}
+                        onClick={() => handleRedraw(mapGroup[0].route_m, mapGroup[0].route_number)}>
+                  경로 그리기
+                </Button>}>
             </CardHeader>
 
             <ListItem>
@@ -129,6 +153,7 @@ export default function MapGroupList({mapGroups, checked, setChecked, moveTo}) {
 }
 
 MapGroupList.propTypes = {
+  reDraw: PropTypes.func,
   mapGroups: PropTypes.array,
   checked: PropTypes.array,
   setChecked: PropTypes.func,
