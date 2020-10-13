@@ -48,14 +48,14 @@ function MY_Route() {
 
 
     const _mapGroups = [[]];
-    let currentGroupIndex = 0;
+    let currentGroupIndex = 1;
     for (let i = 0; i < response.data.route_d.length; i++) {
-      if (currentGroupIndex !== response.data.route_d[i].route_number - 1) {
-        ++currentGroupIndex;
+      if (currentGroupIndex !== response.data.route_d[i].route_number) {
+        currentGroupIndex = response.data.route_d[i].route_number;
         _mapGroups.push([]);
       }
 
-      _mapGroups[currentGroupIndex].push(response.data.route_d[i]);
+      _mapGroups[_mapGroups.length - 1].push(response.data.route_d[i]);
     }
     setGeoDatas(response.data.route_d);
     setMapGroups(_mapGroups);
@@ -83,6 +83,8 @@ function MY_Route() {
     }));
   }, []);
 
+
+  console.log(geoDatas, mapGroups);
 
   return (
     <Page

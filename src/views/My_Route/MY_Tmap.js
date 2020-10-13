@@ -117,26 +117,31 @@ function MY_Tmap({fetchRoute, geoDatas, groupGeoDatas, groupMarkers, setGroupMar
     _groupMarkers.push(groupMarker);
   }
 
-  const drawLine = (_groupLines: Array, groupGeoData: Array) => {
+  const drawLine = (_groupLines: Array, jsonGeoData: Object) => {
     const groupLine = [];
-    for (let i = 0; i < groupGeoData.length; i++) {
-      const latLng = new window.Tmapv2.LatLng(
-        groupGeoData[i].customer_info.latitude,
-        groupGeoData[i].customer_info.longitude)
-      groupLine.push(latLng);
+    const geoArr = JSON.parse(jsonGeoData.json_map);
+    for (let i = 0; i < geoArr.length; i++) {
+      if (geoArr[i].geometry.type === "LineString") {
+        const _groupLine = [];
+        for (let j = 0; j < geoArr[i].geometry.coordinates.length; j++) {
+          const latlng = new window.Tmapv2.Point(geoArr[i].geometry.coordinates[j][0], geoArr[i].geometry.coordinates[j][1]);
+          const convertPoint = new window.Tmapv2.Projection.convertEPSG3857ToWGS84GEO(latlng);
+          const convertChange = new window.Tmapv2.LatLng(convertPoint._lat, convertPoint._lng);
+          _groupLine.push(convertChange);
+        }
+        const line = new window.Tmapv2.Polyline({
+          path: _groupLine,
+          fillColor: routeColor[jsonGeoData.route_number],
+          strokeColor: routeColor[jsonGeoData.route_number],
+          outlineColor: routeColor[jsonGeoData.route_number],
+          strokeWeight: 4, // 라인 두께
+          strokeStyle: "solid", // 선의 종류
+          map: map // 지도 객체
+        });
+        groupLine.push(line);
+      }
     }
-
-    const line = new window.Tmapv2.Polyline({
-      path: groupLine,
-      fillColor: routeColor[groupGeoData[0].route_number],
-      strokeColor: routeColor[groupGeoData[0].route_number],
-      outlineColor: routeColor[groupGeoData[0].route_number],
-      strokeWeight: 3, // 라인 두께
-      strokeStyle: "solid", // 선의 종류
-      map: map // 지도 객체
-    });
-
-    _groupLines.push(line);
+    _groupLines.push(groupLine);
   };
 
   const destroyMarkersLines = () => {
@@ -158,14 +163,14 @@ function MY_Tmap({fetchRoute, geoDatas, groupGeoDatas, groupMarkers, setGroupMar
       for (let i = 0; i < groupGeoDatas.length; i++) {
         drawMarker(_groupMarkers, groupGeoDatas[i]);
       }
-      for (let i = 0; i < groupGeoDatas.length; i++) {
-        drawLine(_groupLines, groupGeoDatas[i]);
+      const jsonGeoDatas = geoDatas.filter(geoData => geoData.json_map !== null);
+      for (let i = 0; i < jsonGeoDatas.length; i++) {
+        drawLine(_groupLines, jsonGeoDatas[i]);
       }
 
       setGroupLines(_groupLines);
       setGroupMarkers(_groupMarkers);
-
-      // map.setCenter(new window.Tmapv2.LatLng(startLat, startLon));
+      debugger;
     }
   }, [groupGeoDatas])
 

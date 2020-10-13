@@ -41,10 +41,14 @@ export default function Result({mapGroups, groupLines, groupMarkers, map}) {
   }
 
   const setInvisibleAll = () => {
+    debugger;
     for (let i = 0; i < groupLines.length; i++) {
-      groupLines[i].setVisible(false);
+      // groupLines[i].setVisible(false);
       for (let j = 0; j < groupMarkers[i].length; j++) {
         groupMarkers[i][j].setVisible(false);
+      }
+      for (let j = 0; j < groupLines[i].length; j++) {
+        groupLines[i][j].setVisible(false);
       }
     }
   }
@@ -65,7 +69,10 @@ export default function Result({mapGroups, groupLines, groupMarkers, map}) {
 
   const toggleInvisibleLine = () => {
     for (let i = 0; i < checked.length; i++) {
-      lineVisible ? groupLines[checked[i]].setVisible(false) : groupLines[checked[i]].setVisible(true);
+      for (let j = 0; j < groupLines[i].length; j++) {
+        lineVisible ? groupLines[checked[i]][j].setVisible(false) : groupLines[checked[i]][j].setVisible(true);
+      }
+
     }
     setLineVisible((prev) => !prev);
   }
@@ -73,9 +80,11 @@ export default function Result({mapGroups, groupLines, groupMarkers, map}) {
   const drawSelected = () => {
     setInvisibleAll();
     for (let i = 0; i < checked.length; i++) {
-      groupLines[checked[i]].setVisible(true);
       for (let j = 0; j < groupMarkers[checked[i]].length; j++) {
         groupMarkers[checked[i]][j].setVisible(true);
+      }
+      for (let j = 0; j < groupLines[checked[i]].length; j++) {
+        groupLines[checked[i]][j].setVisible(true);
       }
     }
   }
