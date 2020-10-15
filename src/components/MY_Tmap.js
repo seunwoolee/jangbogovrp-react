@@ -41,7 +41,7 @@ function MY_Tmap({orders, map}) {
   const createHtmlicon = (number: string) => {
     const style = "position:absolute; z-index:1; color:#000; margin:3px 0 0 0; width:100%; text-align:center; font-weight:bold;";
     const span = `<span style='${style}'>${String(number)}</span>`;
-    // const iconHtml = `<div style="text-align:center;">${span}<img src="images/icon/marker_0.png" /></div>`;
+    // const iconHtml = `<div style="text-align:center;">${span}<img src="images/icon/marker_1.png" /></div>`;
     const iconHtml = `<div style="text-align:center;">${span}<img src="images/makers/marker_0.png" /></div>`;
     return iconHtml;
   };

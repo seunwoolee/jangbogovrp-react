@@ -52,18 +52,17 @@ export const createHtmlicon = (vehicleNo: string, vehicleNoIndex: string) => {
 
 
 export const routeColor = [
-  "#FF0000",
   "#FFBB00",
+  "#FF0000",
   "#1DDB16",
   "#00D8FF",
   "#0100FF",
   "#A09323",
   "#FFE400",
-  "#FFFF6C",
-  // "#0054FF",
+  "#000000",
   "#5F00FF",
   "#FF00DD",
-  "#000000",
+  "#FFFF6C",
   "#FF5E00",
   "#A6A6A6",
   "#C4B73B",
