@@ -17,7 +17,7 @@ export default [
     component: Root
   },
   {
-    path: '/reportPrint',
+    path: '/printRoute',
     exact: true,
     component: MY_Print
   },

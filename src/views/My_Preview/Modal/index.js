@@ -56,6 +56,12 @@ export const create_routeOrder = async (routeM: number, routeNumber: number) => 
     viaPoints.push(viaPoint);
   }
 
+  debugger;
+  let tmapRouteNumber = '20';
+  if (viaPoints.length > 20) {
+    tmapRouteNumber = '30'
+  }
+
   params = {
     reqCoordType: "WGS84GEO",
     resCoordType: "EPSG3857",
@@ -72,7 +78,8 @@ export const create_routeOrder = async (routeM: number, routeNumber: number) => 
 
   try {
     response = await globalAxios.post(
-      "https://apis.openapi.sk.com/tmap/routes/routeOptimization20?version=1&format=json",
+      // "https://apis.openapi.sk.com/tmap/routes/routeOptimization20?version=1&format=json",
+      `https://apis.openapi.sk.com/tmap/routes/routeOptimization${tmapRouteNumber}?version=1&format=json`,
       params,
       {headers: {appKey: APIKEY}}
     );
@@ -100,8 +107,6 @@ export const create_routeOrder = async (routeM: number, routeNumber: number) => 
       const url = "delivery/routeDUpdate/";
       await axios.patch(url, newRouteOrders[i], {headers: {Authorization: `Token ${localStorage.getItem('token')}`}})
     }
-
-    console.log(newRouteOrders);
   } catch (e) {
     console.log(e)
   }
@@ -141,7 +146,7 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
 
     try {
       for (let i = 1; i <= maxRouteNumber; i++) {
-        await timeout(3000);
+        await timeout(30);
         response = await create_routeOrder(routeMId, i);
       }
     } catch (error) {

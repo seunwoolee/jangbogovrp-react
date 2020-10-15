@@ -24,6 +24,24 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+export const createGroupMaps = (maxRouteNumber, routeds) => {
+  const newMapGroups = [];
+
+  for (let i = 0; i < maxRouteNumber; i++) {
+    newMapGroups.push([]);
+  }
+
+  for (let i = 0; i < routeds.length; i++) {
+    newMapGroups[routeds[i].route_number - 1].push(routeds[i]);
+  }
+
+  return newMapGroups;
+}
+
+export const getRoute = async (url, config) => {
+  return await axios.get(url, config)
+}
+
 function MY_Route() {
   const classes = useStyles();
   const history = useHistory();
@@ -46,35 +64,17 @@ function MY_Route() {
     const response = await getRoute("delivery/maps/", config);
     dispatch(isloading(false));
 
-
-    const _mapGroups = [];
     const maxRouteNumber = Math.max(...response.data.route_d.map(d => d.route_number));
+    const newMapGroups = createGroupMaps(maxRouteNumber, response.data.route_d);
 
-    for (let i = 0; i < maxRouteNumber; i++) {
-      _mapGroups.push([]);
-    }
-
-    for (let i = 0; i < response.data.route_d.length; i++) {
-      _mapGroups[response.data.route_d[i].route_number - 1].push(response.data.route_d[i]);
-    }
-
-    // let currentGroupIndex = 1;
-    // for (let i = 0; i < response.data.route_d.length; i++) {
-    //   if (currentGroupIndex !== response.data.route_d[i].route_number) {
-    //     currentGroupIndex = response.data.route_d[i].route_number;
-    //     _mapGroups.push([]);
-    //   }
-    //
-    //   _mapGroups[_mapGroups.length - 1].push(response.data.route_d[i]);
-    // }
     setGeoDatas(response.data.route_d);
-    setMapGroups(_mapGroups);
+    setMapGroups(newMapGroups);
 
   };
 
-  const getRoute = async (url, config) => {
-    return await axios.get(url, config)
-  }
+  // const getRoute = async (url, config) => {
+  //   return await axios.get(url, config)
+  // }
 
   useEffect(() => {
     if (!(localStorage.getItem('token'))) {

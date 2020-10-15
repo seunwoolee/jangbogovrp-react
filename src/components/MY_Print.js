@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -10,54 +10,84 @@ import MY_approverLine from "./MY_approverLine";
 import axios from "../utils/my_axios";
 import getInvoiceDetailCard from "../utils/getInvoiceDetailCard";
 import Box from "@material-ui/core/Box";
+import {isloading} from "../actions";
+import {createGroupMaps, getRoute} from "../views/My_Route";
+import {Grid, TableHead} from "@material-ui/core";
+import getThousand from "../utils/getThousand";
+import {makeStyles} from "@material-ui/styles";
+import {getOrderPrice} from "../views/My_Route/Modal";
+
+const useStyles = makeStyles((theme) => ({
+  tableContainer: {
+    pageBreakAfter: 'always',
+    height: '29.7cm',
+    width: '21cm'
+  },
+  tableCellContent: {
+    width: '100px',
+  },
+  tableRow: {
+    cursor: "pointer"
+  }
+}));
 
 function MY_Print() {
+  const classes = useStyles();
   const location = useLocation();
-  const url = `ea/document/`;
   const params = new URLSearchParams(location.search);
-  const [document, setDocument] = useState(null);
+  const [geoDatas, setGeoDatas] = useState([]);
+  const [mapGroups, setMapGroups] = useState([[]]);
 
-  useEffect(() => {
+  const fetchRoute = async () => {
+    const routeM = params.get('routeM');
     const config = {
       headers: {Authorization: `Token ${localStorage.getItem('token')}`},
-      params: {document_id: params.get('documentId')}
+      params: {routeM: routeM}
     };
 
-    axios.get(url, config)
-      .then((response) => {
-        setDocument(response.data);
-      });
+    const response = await getRoute("delivery/maps/", config);
+    const maxRouteNumber = Math.max(...response.data.route_d.map(d => d.route_number));
+    const _mapGroups = createGroupMaps(maxRouteNumber, response.data.route_d);
+    setGeoDatas(response.data.route_d);
+    setMapGroups(_mapGroups);
+  };
+
+  useEffect(() => {
+    fetchRoute();
   }, []);
 
   return (
     <>
-      {document ? (
+      {mapGroups.length > 0 ? (
         <>
-          <Box pb={2} pt={2}>
-            <MY_approverLine signs={document.signs} />
-          </Box>
-          <Box pb={2} pt={2}>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell>작성자</TableCell>
-                  <TableCell>{document.author}</TableCell>
-                  <TableCell>작성일자</TableCell>
-                  <TableCell>{document.created}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>제목</TableCell>
-                  <TableCell>{document.title}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-          </Box>
-          {getInvoiceDetailCard(document.document_type, document.invoices, document.attachments, null)}
+          {mapGroups.map((mapGroup, index) => (
+            <TableContainer className={classes.tableContainer} component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell size={"small"} align={"center"}>No</TableCell>
+                    <TableCell size={"small"} align={"center"}>주문자명</TableCell>
+                    <TableCell size={"small"} align={"center"}>주소</TableCell>
+                    <TableCell size={"small"} align={"center"}>금액</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {mapGroup.sort((a, b) => a.route_index - b.route_index).map((row, index) => (
+                    <Fragment key={row.route_index}>
+                      <TableRow className={classes.tableRow}>
+                        <TableCell align="center" size={"small"}>{row.route_index}</TableCell>
+                        <TableCell align="center" size={"small"}>{row.customer_info.name}</TableCell>
+                        <TableCell align="center" size={"small"}>{row.customer_info.address}</TableCell>
+                        <TableCell align="center" size={"small"}>{getThousand(getOrderPrice(row.orders))}원</TableCell>
+                      </TableRow>
+                    </Fragment>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ))}
         </>
-        ) : null}
-
+      ) : null}
     </>
   );
 }

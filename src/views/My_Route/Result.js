@@ -104,12 +104,21 @@ export default function Result({fetchRoute, mapGroups, groupLines, groupMarkers,
     drawSelected();
   }, [checked]);
 
+  const printRoute = () => {
+    window.open(
+      `/printRoute?routeM=${mapGroups[0][0].route_m}`,
+      "_blank",
+      "width=700,height=700"
+    );
+  };
+
   return (
     <Paper className={classes.root}>
       <CardHeader
         title={`총 대수 4대`}
         action={
           <>
+            <Button size={"small"} variant={"contained"} color={"primary"} onClick={printRoute}>인쇄</Button>
             <Button size={"small"} variant={"contained"} color={allVisible ? "default" : "secondary"}
                     onClick={toggleVisibleAll}>
               {allVisible ? '전체선택 해제' : '전체선택'}

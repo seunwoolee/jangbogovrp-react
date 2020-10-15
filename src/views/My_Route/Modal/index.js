@@ -55,17 +55,17 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+export const getOrderPrice = (orders) => {
+  let totalPrice = 0;
+  for (let i = 0; i < orders.length; i++) {
+    totalPrice += orders[i].price;
+  }
+  return totalPrice;
+}
+
 function Index({open, onClose, className, mapGroup, moveTo}) {
   const classes = useStyles();
-  const getOrderPrice = (orders) => {
-    let totalPrice = 0;
-    for (let i = 0; i < orders.length; i++) {
-      totalPrice += orders[i].price;
-    }
-    return totalPrice;
-  }
 
-  // 클릭 시 moveTo
 
   return (
     <>

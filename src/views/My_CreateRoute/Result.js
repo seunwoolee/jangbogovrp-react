@@ -35,12 +35,21 @@ export default function Result({mapGroups, map}) {
     map.setCenter(new window.Tmap.LonLat(lon, lat).transform(pr_4326, pr_3857), 16);
   }
 
+  const printRoute = () => {
+    window.open(
+      `/reportPrint?documentId=${document.id}`,
+      "_blank",
+      "width=700,height=700"
+    );
+  };
+
   return (
     <Paper>
       <CardHeader
         title={`총 대수 4대`}
         action={
           <>
+            <Button size={"small"} variant={"contained"} color={"primary"} onClick={printRoute}>인쇄</Button>
             <Button size={"small"} variant={"contained"} color={"secondary"}>전체선택 해제</Button>
             <Button size={"small"} variant={"contained"}>경로선 제거</Button>
           </>}/>

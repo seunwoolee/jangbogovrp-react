@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {makeStyles} from '@material-ui/styles';
+import {routeColor} from "../My_Route/MY_Tmap";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -12,26 +13,6 @@ const useStyles = makeStyles(theme => ({
 
 export const pr_3857 = new window.Tmap.Projection("EPSG:3857");
 export const pr_4326 = new window.Tmap.Projection("EPSG:4326");
-export const routeColor = ["#FF0000",
-  "#FFBB00",
-  "#1DDB16",
-  "#00D8FF",
-  "#0100FF",
-  "#A09323",
-  "#FFE400",
-  "#0054FF",
-  "#5F00FF",
-  "#FF00DD",
-  "#000000",
-  "#FF5E00",
-  "#A6A6A6",
-  "#C4B73B",
-  "#6CC0FF",
-  "#980000",
-  "#B2ADFF",
-  "#269BAF",
-  "#FF9090",
-  "#FFFF6C"];
 
 function MY_Tmap({geoDatas, map}) {
   const classes = useStyles();

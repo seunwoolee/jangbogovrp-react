@@ -147,8 +147,6 @@ export default function MapGroupList({reDraw, mapGroups, checked, setChecked, mo
 
       {mapGroups.length > 0 ?
         <Index open={open} onClose={handleClose} mapGroup={mapGroups[detailIndex]} moveTo={moveTo}/> : null}
-
-
     </List>
   );
 }
