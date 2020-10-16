@@ -24,8 +24,19 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import {getOrderTotalPrice} from "../MapGroupList";
 import axios from "../../../utils/my_axios";
+import FormLabel from "@material-ui/core/FormLabel";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Radio from "@material-ui/core/Radio";
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    bottom: "auto!important",
+    right: "auto!important",
+  },
+  backdrop: {
+    opacity: "0.2!important"
+  },
   avatarRoot: {
     width: "auto"
   },
@@ -80,7 +91,7 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
   }, [geoDatas])
 
   const handleChange = (event) => {
-    setNewRouteNumber(event.target.value);
+    setNewRouteNumber(Number(event.target.value));
   }
 
   const getOrderTotalPrice = (orders) => {
@@ -94,6 +105,9 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
   return (
     <div>
       <Dialog
+        BackdropProps={{className: classes.backdrop}}
+        className={classes.root}
+        // classes={{root: classes.root}}
         maxWidth={"lg"}
         open={open}
         onClose={onClose}
@@ -113,28 +127,26 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
                   />
                 </>
               </ListItemAvatar>
-              <ListItemAvatar className={classes.secondListItemAvatar}>
-                <>
-                  <ListItemText
-                    secondary={`변경될 경로`}
-                  />
-                  <Avatar
-                    classes={{root: classes.avatarRoot, img: classes.avatar}}
-                    alt={`Avatar n°${geodata.route_index + 2}`}
-                    src={`/images/makers/marker_${newRouteNumber}.png`}
-                  />
-                </>
-              </ListItemAvatar>
               <FormControl className={classes.formControl}>
-                <InputLabel>경로</InputLabel>
-                <Select
-                  value={newRouteNumber}
-                  onChange={handleChange}
-                >
+                <FormLabel component="legend">변경될 경로</FormLabel>
+                {/*<RadioGroup aria-label="gender" name="gender1" value={newRouteNumber} onChange={handleChange}>*/}
+                {/*  <FormControlLabel value="female" control={<Radio/>} label="Female"/>*/}
+                {/*  <FormControlLabel value="male" control={<Radio/>} label="Male"/>*/}
+                {/*  <FormControlLabel value="other" control={<Radio/>} label="Other"/>*/}
+                {/*  <FormControlLabel value="disabled" disabled control={<Radio/>} label="(Disabled option)"/>*/}
+                {/*</RadioGroup>*/}
+                <RadioGroup row value={newRouteNumber} onChange={handleChange}>
                   {itemArr.map(i => (
-                    <MenuItem key={i} value={i + 1}>{i + 1}번</MenuItem>
+                    <FormControlLabel
+                      key={i + 1}
+                      value={i + 1}
+                      control={<Radio/>}
+                      label={
+                        <Avatar classes={{img: classes.avatar}}
+                                src={`/images/makers/marker_${i + 1}.png`}/>}
+                    />
                   ))}
-                </Select>
+                </RadioGroup>
               </FormControl>
             </ListItem>
           ))}
