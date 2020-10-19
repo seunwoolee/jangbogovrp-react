@@ -59,13 +59,18 @@ const useStyles = makeStyles((theme) => ({
 
 function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
   const classes = useStyles();
-  const itemArr = [];
   const [newRouteNumber, setNewRouteNumber] = useState(1);
+  const [routeNumbers, setRouteNumbers] = useState([]);
+  const [add, setAdd] = useState(0);
 
   const handleSubmit = async () => {
     await changeRouteNumber();
     onClose();
     fetchRoute();
+  }
+
+  const handleAdd = () => {
+    add === 0 ? setAdd(1) : setAdd(0);
   }
 
   const changeRouteNumber = async () => {
@@ -81,15 +86,24 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
     return await axios.post(url, data, config);
   }
 
-  for (let i = 0; i < maxRouteNumber; i++) {
-    itemArr.push(i);
-  }
 
   useEffect(() => {
     if (geoDatas[0]) {
       setNewRouteNumber(geoDatas[0].route_number);
     }
-  }, [geoDatas])
+
+    const _routeNumbers = []
+    for (let i = 0; i < maxRouteNumber + add; i++) {
+      _routeNumbers.push(i);
+    }
+
+    setRouteNumbers(_routeNumbers);
+
+  }, [geoDatas, add])
+
+  useEffect(() => {
+    return () => setAdd(0);
+  }, [open])
 
   const handleChange = (event) => {
     setNewRouteNumber(Number(event.target.value));
@@ -108,7 +122,6 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
       <Dialog
         BackdropProps={{className: classes.backdrop}}
         className={classes.root}
-        // classes={{root: classes.root}}
         maxWidth={"lg"}
         open={open}
         onClose={onClose}
@@ -131,7 +144,7 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
               <FormControl className={classes.formControl}>
                 <FormLabel component="legend">변경될 경로</FormLabel>
                 <RadioGroup row value={newRouteNumber} onChange={handleChange}>
-                  {itemArr.map(i => (
+                  {routeNumbers.map(i => (
                     <FormControlLabel
                       key={i + 1}
                       value={i + 1}
@@ -170,6 +183,9 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
 
         </DialogContent>
         <DialogActions>
+          <Button onClick={handleAdd} color="primary" variant={"contained"}>
+            경로추가
+          </Button>
           <Button onClick={onClose} color="default" variant={"outlined"}>
             닫기
           </Button>
