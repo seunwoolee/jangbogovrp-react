@@ -56,7 +56,6 @@ export const create_routeOrder = async (routeM: number, routeNumber: number) => 
     viaPoints.push(viaPoint);
   }
 
-  debugger;
   let tmapRouteNumber = '20';
   if (viaPoints.length > 20) {
     tmapRouteNumber = '30'
@@ -96,17 +95,15 @@ export const create_routeOrder = async (routeM: number, routeNumber: number) => 
           const temp = {routeM: routeM, customerId: properties.viaPointId, index: properties.index};
           if (properties.index === "1") {
             temp.jsonData = jsonData;
-            console.log(temp);
           }
           newRouteOrders.push(temp);
         }
       }
     }
 
-    for (let i in newRouteOrders) {
-      const url = "delivery/routeDUpdate/";
-      await axios.patch(url, newRouteOrders[i], {headers: {Authorization: `Token ${localStorage.getItem('token')}`}})
-    }
+    await axios.patch("delivery/routeDUpdate/",
+      newRouteOrders, {headers: {Authorization: `Token ${localStorage.getItem('token')}`}})
+
   } catch (e) {
     console.log(e)
   }

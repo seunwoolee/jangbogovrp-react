@@ -115,7 +115,7 @@ export default function Result({fetchRoute, mapGroups, groupLines, groupMarkers,
   return (
     <Paper className={classes.root}>
       <CardHeader
-        title={`총 대수 4대`}
+        title={`총 대수 ${mapGroups.length}대`}
         action={
           <>
             <Button size={"small"} variant={"contained"} color={"primary"} onClick={printRoute}>인쇄</Button>
