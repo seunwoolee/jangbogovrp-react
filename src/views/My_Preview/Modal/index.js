@@ -77,7 +77,6 @@ export const create_routeOrder = async (routeM: number, routeNumber: number) => 
 
   try {
     response = await globalAxios.post(
-      // "https://apis.openapi.sk.com/tmap/routes/routeOptimization20?version=1&format=json",
       `https://apis.openapi.sk.com/tmap/routes/routeOptimization${tmapRouteNumber}?version=1&format=json`,
       params,
       {headers: {appKey: APIKEY}}
