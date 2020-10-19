@@ -23,6 +23,6 @@ const app = (
 
 // ReactDOM.render(<App />, document.getElementById('root'));
 ReactDOM.render(app, document.getElementById('root'));
-if (axios_URL === 'https://kcfamily.kr/'){
-  registerServiceWorker();
-}
+// if (axios_URL === 'https://kcfamily.kr/'){
+//   registerServiceWorker();
+// }

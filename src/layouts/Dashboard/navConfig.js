@@ -15,11 +15,6 @@ export function MY_navConfig() {
           href: '/preview',
           icon: LocalShippingIcon,
         },
-        // {
-        //   title: '경로보기',
-        //   href: '/route',
-        //   icon: MapIcon,
-        // },
         {
           title: '배차내역조회',
           href: '/deliveryList',
@@ -28,105 +23,15 @@ export function MY_navConfig() {
       ]
     },
     // {
-    //   subheader: '결재작성',
+    //   subheader: '설정',
     //   items: [
     //     {
-    //       title: '채무발생작성',
-    //       href: '/reportWrite',
-    //       icon: CreateIcon,
-    //       label: () => {
-    //         return (
-    //           session.todoCount.채무발생 > 0 ? (
-    //             <Label
-    //               color={colors.blue[500]}
-    //               shape="rounded"
-    //             >
-    //               {session.todoCount.채무발생}
-    //             </Label>
-    //           ) : null
-    //         )
-    //       }
-    //     },
-    //     {
-    //       title: '채무정리작성',
-    //       href: '/reportWritePayment',
-    //       icon: BorderColorIcon,
-    //       label: () => {
-    //         return (
-    //           session.todoCount.채무정리 > 0 ? (
-    //             <Label
-    //               color={colors.deepPurple[500]}
-    //               shape="rounded"
-    //             >
-    //               {session.todoCount.채무정리}
-    //             </Label>
-    //           ) : null
-    //         )
-    //       }
-    //     },
-    //     {
-    //       title: '채권발생작성',
-    //       href: '/reportWriteInvoice',
-    //       icon: CreateOutlinedIcon,
-    //       label: () => {
-    //         return (
-    //           session.todoCount.채권발생 > 0 ? (
-    //             <Label
-    //               color={colors.pink[500]}
-    //               shape="rounded"
-    //             >
-    //               {session.todoCount.채권발생}
-    //             </Label>
-    //           ) : null
-    //         )
-    //       }
-    //     },
-    //     {
-    //       title: '채권정리작성',
-    //       href: '/reportWriteReceipt',
-    //       icon: BorderColorOutlinedIcon,
-    //       label: () => {
-    //         return (
-    //           session.todoCount.채권정리 > 0 ? (
-    //             <Label
-    //               color={colors.green[500]}
-    //               shape="rounded"
-    //             >
-    //               {session.todoCount.채권정리}
-    //             </Label>
-    //           ) : null
-    //         )
-    //       }
-    //     },
-    //     {
-    //       title: '일반전표작성',
-    //       href: '/reportWriteNacct',
-    //       icon: CreateIcon,
-    //       label: () => {
-    //         return (
-    //           session.todoCount.일반전표 > 0 ? (
-    //             <Label
-    //               color={colors.purple[500]}
-    //               shape="rounded"
-    //             >
-    //               {session.todoCount.일반전표}
-    //             </Label>
-    //           ) : null
-    //         )
-    //       }
+    //       title: '계정정보',
+    //       href: '/chat',
+    //       icon: SettingsIcon,
     //     },
     //   ]
     // },
-    {
-      subheader: '설정',
-      items: [
-        {
-          title: '계정정보',
-          href: '/chat',
-          icon: SettingsIcon,
-        },
-      ]
-    },
 
   ];
 }

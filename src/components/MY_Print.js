@@ -53,7 +53,7 @@ function MY_Print() {
   };
 
   useEffect(() => {
-    fetchRoute();
+    fetchRoute().then(() => window.print());
   }, []);
 
   return (
