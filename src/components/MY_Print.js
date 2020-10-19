@@ -73,7 +73,7 @@ function MY_Print() {
                     <Fragment key={row.route_index}>
                       <TableRow className={classes.tableRow}>
                         <TableCell align="center" size={"small"}>{row.route_index}</TableCell>
-                        <TableCell align="center" size={"small"}>{row.customer_info.name}</TableCell>
+                        <TableCell align="center" size={"small"}>{row.customer_info.name}({row.customer_info.customer_id})</TableCell>
                         <TableCell align="center" size={"small"}>{row.customer_info.address}</TableCell>
                         <TableCell align="center" size={"small"}>{getThousand(getOrderPrice(row.orders))}원</TableCell>
                       </TableRow>
