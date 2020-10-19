@@ -76,6 +76,7 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
       to_route_number: newRouteNumber,
       from_route_number: geoDatas[0].route_number,
       current_route_index: geoDatas[0].route_index,
+      is_duplicated: geoDatas.length > 1,
     };
     return await axios.post(url, data, config);
   }
@@ -129,12 +130,6 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
               </ListItemAvatar>
               <FormControl className={classes.formControl}>
                 <FormLabel component="legend">변경될 경로</FormLabel>
-                {/*<RadioGroup aria-label="gender" name="gender1" value={newRouteNumber} onChange={handleChange}>*/}
-                {/*  <FormControlLabel value="female" control={<Radio/>} label="Female"/>*/}
-                {/*  <FormControlLabel value="male" control={<Radio/>} label="Male"/>*/}
-                {/*  <FormControlLabel value="other" control={<Radio/>} label="Other"/>*/}
-                {/*  <FormControlLabel value="disabled" disabled control={<Radio/>} label="(Disabled option)"/>*/}
-                {/*</RadioGroup>*/}
                 <RadioGroup row value={newRouteNumber} onChange={handleChange}>
                   {itemArr.map(i => (
                     <FormControlLabel

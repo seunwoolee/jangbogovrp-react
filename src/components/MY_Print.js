@@ -16,6 +16,7 @@ import {Grid, TableHead} from "@material-ui/core";
 import getThousand from "../utils/getThousand";
 import {makeStyles} from "@material-ui/styles";
 import {getOrderPrice} from "../views/My_Route/Modal";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles((theme) => ({
   tableContainer: {
@@ -62,6 +63,7 @@ function MY_Print() {
         <>
           {mapGroups.map((mapGroup, index) => (
             <TableContainer className={classes.tableContainer} component={Paper}>
+              <Typography variant="h3" component="h4">{index + 1}번</Typography>
               <Table>
                 <TableHead>
                   <TableRow>
