@@ -52,6 +52,21 @@ function MY_Print() {
     fetchRoute().then(() => window.print());
   }, []);
 
+  const tableRows = (geoData) => {
+    const content = [];
+    for (let i = 0; i < geoData.orders.length; i++) {
+      content.push((
+      <TableRow key={geoData.orders[i].id}>
+        <TableCell size={"small"} align="center">{geoData.route_index}</TableCell>
+        <TableCell size={"small"} align="center">{geoData.customer_info.name}</TableCell>
+        <TableCell size={"small"} align="center">{geoData.customer_info.address}</TableCell>
+        <TableCell size={"small"} align="center">{getThousand(geoData.orders[i].price) + '원'}</TableCell>
+      </TableRow>
+    ))
+    }
+    return content;
+  }
+
   return (
     <>
       {mapGroups.length > 0 ? (
@@ -71,12 +86,7 @@ function MY_Print() {
                 <TableBody>
                   {mapGroup.sort((a, b) => a.route_index - b.route_index).map((row, index) => (
                     <Fragment key={row.route_index}>
-                      <TableRow className={classes.tableRow}>
-                        <TableCell align="center" size={"small"}>{row.route_index}</TableCell>
-                        <TableCell align="center" size={"small"}>{row.customer_info.name}({row.customer_info.customer_id})</TableCell>
-                        <TableCell align="center" size={"small"}>{row.customer_info.address}</TableCell>
-                        <TableCell align="center" size={"small"}>{getThousand(getOrderPrice(row.orders))}원</TableCell>
-                      </TableRow>
+                        {tableRows(row).map(content => content)}
                     </Fragment>
                   ))}
                 </TableBody>

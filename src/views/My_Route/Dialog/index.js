@@ -109,12 +109,19 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
     setNewRouteNumber(Number(event.target.value));
   }
 
-  const getOrderTotalPrice = (orders) => {
-    let totalPrice = 0;
-    for (let i = 0; i < orders.length; i++) {
-      totalPrice += orders[i].price
+  const tableRows = (geoData) => {
+    const content = [];
+    for (let i = 0; i < geoData.orders.length; i++) {
+      content.push((
+        <TableRow key={geoData.orders[i].id}>
+          <TableCell align="center">{geoData.route_index}</TableCell>
+          <TableCell align="center">{geoData.customer_info.name}</TableCell>
+          <TableCell align="center">{geoData.customer_info.address}</TableCell>
+          <TableCell align="center">{getThousand(geoData.orders[i].price) + '원'}</TableCell>
+        </TableRow>
+      ))
     }
-    return totalPrice;
+    return content;
   }
 
   return (
@@ -170,12 +177,13 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
             <TableBody>
               {geoDatas.map((geoData, index) => (
                 <Fragment key={index}>
-                  <TableRow>
-                    <TableCell align="center">{geoData.route_index}</TableCell>
-                    <TableCell align="center">{geoData.customer_info.name}</TableCell>
-                    <TableCell align="center">{geoData.customer_info.address}</TableCell>
-                    <TableCell align="center">{getThousand(getOrderTotalPrice(geoData.orders)) + '원'}</TableCell>
-                  </TableRow>
+                  {tableRows(geoData).map(content => content)}
+                  {/*<TableRow>*/}
+                  {/*  <TableCell align="center">{geoData.route_index}</TableCell>*/}
+                  {/*  <TableCell align="center">{geoData.customer_info.name}</TableCell>*/}
+                  {/*  <TableCell align="center">{geoData.customer_info.address}</TableCell>*/}
+                  {/*  <TableCell align="center">{getThousand(getOrderTotalPrice(geoData.orders)) + '원'}</TableCell>*/}
+                  {/*</TableRow>*/}
                 </Fragment>
               ))}
             </TableBody>
