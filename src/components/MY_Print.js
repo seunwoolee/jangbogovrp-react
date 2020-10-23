@@ -20,11 +20,12 @@ const useStyles = makeStyles((theme) => ({
     width: '21cm'
   },
   tableCellContent: {
-    width: '100px',
+    width: '120px',
   },
   tableRow: {
     '& td, th': {
       borderBottom: "2px solid gray",
+      borderRight: "2px solid gray",
     }
   },
   tableHead: {
@@ -71,12 +72,31 @@ function MY_Print() {
           <TableCell size={"small"} align="center">{geoData.route_index}</TableCell>
           <TableCell size={"small"} align="center">{geoData.customer_info.name}</TableCell>
           <TableCell size={"small"} align="center">{geoData.customer_info.address}</TableCell>
-          <TableCell size={"small"} align="center">{getThousand(geoData.orders[i].price) + '원'}</TableCell>
+          <TableCell className={classes.tableCellContent} size={"small"} align="center">{getThousand(geoData.orders[i].price) + '원'}</TableCell>
         </TableRow>
       ))
     }
     return content;
   }
+
+  const getGroupPrice = (mapGroup) => {
+    let price = 0;
+
+    for (let i = 0; i < mapGroup.length; i++) {
+      for (let j = 0; j < mapGroup[i].orders.length; j++) {
+        price += mapGroup[i].orders[j].price;
+      }
+    }
+
+    return (
+      <TableRow key={price} className={classes.tableRow}>
+        <TableCell colSpan={3} size={"small"} align="center">{'합계'}</TableCell>
+        <TableCell size={"small"} align="center">{getThousand(price) + '원'}</TableCell>
+      </TableRow>
+  )
+
+  }
+
 
   return (
     <>
@@ -100,6 +120,8 @@ function MY_Print() {
                       {tableRows(row).map(content => content)}
                     </Fragment>
                   ))}
+                  {getGroupPrice(mapGroup)}
+
                 </TableBody>
               </Table>
             </TableContainer>
@@ -108,6 +130,6 @@ function MY_Print() {
       ) : null}
     </>
   );
-}
+  }
 
-export default MY_Print;
+  export default MY_Print;
