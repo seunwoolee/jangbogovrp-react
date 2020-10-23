@@ -94,6 +94,7 @@ export const create_routeOrder = async (routeM: number, routeNumber: number) => 
           const temp = {routeM: routeM, customerId: properties.viaPointId, index: properties.index};
           if (properties.index === "1") {
             temp.jsonData = jsonData;
+            temp.totalDistance = response.data.properties.totalDistance;
           }
           newRouteOrders.push(temp);
         }

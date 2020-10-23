@@ -47,7 +47,7 @@ export default function MapGroupList({reDraw, mapGroups, checked, setChecked, mo
   const handleRedraw = async (routeM, routeNumber) => {
     if (window.confirm('경로를 다시 그리겠습니까?')) {
       dispatch(isloading(true));
-      const response = await create_routeOrder(routeM, routeNumber);
+      await create_routeOrder(routeM, routeNumber);
       dispatch(isloading(false));
       return reDraw();
     }

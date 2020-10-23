@@ -121,7 +121,6 @@ function MY_Print() {
                     </Fragment>
                   ))}
                   {getGroupPrice(mapGroup)}
-
                 </TableBody>
               </Table>
             </TableContainer>
