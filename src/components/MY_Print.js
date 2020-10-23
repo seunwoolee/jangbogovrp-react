@@ -23,8 +23,19 @@ const useStyles = makeStyles((theme) => ({
     width: '100px',
   },
   tableRow: {
-    cursor: "pointer"
-  }
+    '& td, th': {
+      borderBottom: "2px solid gray",
+    }
+  },
+  tableHead: {
+    backgroundColor: '#c1c1c1',
+    '& tr': {
+      height: '50px'
+    },
+    '& th': {
+      fontWeight: 600
+    },
+  },
 }));
 
 function MY_Print() {
@@ -56,13 +67,13 @@ function MY_Print() {
     const content = [];
     for (let i = 0; i < geoData.orders.length; i++) {
       content.push((
-      <TableRow key={geoData.orders[i].id}>
-        <TableCell size={"small"} align="center">{geoData.route_index}</TableCell>
-        <TableCell size={"small"} align="center">{geoData.customer_info.name}</TableCell>
-        <TableCell size={"small"} align="center">{geoData.customer_info.address}</TableCell>
-        <TableCell size={"small"} align="center">{getThousand(geoData.orders[i].price) + '원'}</TableCell>
-      </TableRow>
-    ))
+        <TableRow key={geoData.orders[i].id} className={classes.tableRow}>
+          <TableCell size={"small"} align="center">{geoData.route_index}</TableCell>
+          <TableCell size={"small"} align="center">{geoData.customer_info.name}</TableCell>
+          <TableCell size={"small"} align="center">{geoData.customer_info.address}</TableCell>
+          <TableCell size={"small"} align="center">{getThousand(geoData.orders[i].price) + '원'}</TableCell>
+        </TableRow>
+      ))
     }
     return content;
   }
@@ -75,8 +86,8 @@ function MY_Print() {
             <TableContainer className={classes.tableContainer} component={Paper}>
               <Typography variant="h3" component="h4">{index + 1}번</Typography>
               <Table>
-                <TableHead>
-                  <TableRow>
+                <TableHead className={classes.tableHead}>
+                  <TableRow className={classes.tableRow}>
                     <TableCell size={"small"} align={"center"}>No</TableCell>
                     <TableCell size={"small"} align={"center"}>주문자명</TableCell>
                     <TableCell size={"small"} align={"center"}>주소</TableCell>
@@ -86,7 +97,7 @@ function MY_Print() {
                 <TableBody>
                   {mapGroup.sort((a, b) => a.route_index - b.route_index).map((row, index) => (
                     <Fragment key={row.route_index}>
-                        {tableRows(row).map(content => content)}
+                      {tableRows(row).map(content => content)}
                     </Fragment>
                   ))}
                 </TableBody>

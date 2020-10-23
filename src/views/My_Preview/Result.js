@@ -45,7 +45,6 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
 
   const saveGeolocationToErp = () => {
     if (window.confirm('좌표를 수집 하시겠습니까?')) {
-      dispatch(isloading(true));
       const url = "customer/preview_order/";
       const config = {
         headers: {Authorization: `Token ${localStorage.getItem('token')}`},
