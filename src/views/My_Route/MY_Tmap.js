@@ -66,13 +66,15 @@ export const routeColor = [
   "#FF5E00",
   "#A6A6A6",
   "#C4B73B",
-  "#6CC0FF",
-  "#980000",
-  "#B2ADFF",
-  "#269BAF",
-  "#FF9090",
-  "#FFFF6C"];
-
+  "#6CC0FF", // 14
+  "#980000", // 15
+  "#B2ADFF", // 16
+  "#269BAF", // 17
+  "#FF9090", // 18
+  "#4b7449", // 19
+  "#ba4097", // 20
+];
+// TODO CourseNum이 null or 0 이면 흰색으로 처리 해줘야한다
 
 function MY_Tmap({fetchRoute, geoDatas, groupGeoDatas, groupMarkers, setGroupMarkers, groupLines, setGroupLines, map}) {
   const classes = useStyles();

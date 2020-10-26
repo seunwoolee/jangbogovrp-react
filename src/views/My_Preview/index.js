@@ -71,7 +71,6 @@ function Preview() {
     fetchOrderData();
   }, [isAm]);
 
-
   return (
     <Page
       className={classes.root}
@@ -92,7 +91,7 @@ function Preview() {
         <Grid container spacing={1}>
           <Grid item xs={12} lg={9}>
             {/* eslint-disable-next-line react/jsx-pascal-case */}
-            <MY_Tmap orders={orderData} map={map} markers={markers} setMarkers={setMarkers}/>
+            <MY_Tmap fetchOrderData={fetchOrderData} orders={orderData} map={map} markers={markers} setMarkers={setMarkers}/>
           </Grid>
           <Grid item xs={12} lg={3}>
             <Result orders={orderData} fetchOrderData={fetchOrderData} map={map} isAm={isAm} setIsAm={setIsAm}/>
