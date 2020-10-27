@@ -12,7 +12,7 @@ import Header from './Header';
 import {isloading} from "../../actions";
 import Result from "./Result";
 import LoadingBar from "../../components/MY_LoadingBar";
-import MY_Tmap from "./MY_Tmap";
+import MY_Tmap, {startLat, startLon} from "./MY_Tmap";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -58,6 +58,7 @@ function Preview() {
     }
 
     setMap(new window.Tmapv2.Map("myTmap", {
+      center: new window.Tmapv2.LatLng(startLat, startLon),
       height: '750px',
       transitionEffect: "resize",
       animation: true,

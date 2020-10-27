@@ -83,7 +83,6 @@ function MY_Tmap({fetchOrderData, orders, map, markers, setMarkers}) {
       setMarkers(_markers);
       setPopups(_popups);
 
-      map.setCenter(new window.Tmapv2.LatLng(startLat, startLon));
     }
 
   }, [orders])
