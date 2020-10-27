@@ -16,6 +16,8 @@ import globalAxios from "axios";
 import {useDispatch} from "react-redux";
 import {useHistory} from "react-router";
 import {startLat, startLon} from "../MY_Tmap";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -113,6 +115,7 @@ export const create_routeOrder = async (routeM: number, routeNumber: number) => 
 function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess, setInfo}) {
   const today = moment().format('YYYY-MM-DD');
   const [carCount, setCarCount] = useState('');
+  const [isAutoChecked, setIsAutoChecked] = useState(false);
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -120,15 +123,19 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
   const config = {headers: {Authorization: `Token ${localStorage.getItem('token')}`}};
   const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+  const handleChecked = () => {
+    setIsAutoChecked(prev => !prev);
+  }
+
   const onSubmit = async () => {
     dispatch(isloading(true));
     let response = null;
 
     try {
       response = await create_customer();
-    } catch (error) {
+    } catch (err) {
       dispatch(isloading(false));
-      return onComplete(false, '수집 되지 않은 좌표가 있습니다');
+      return onComplete(false, err.response.data.message);
     }
 
     try {
@@ -156,7 +163,11 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
 
 
   const create_route = async () => {
-    const url = "core/create_route/";
+    let url = "core/create_route_manual/"
+    if (isAutoChecked === true) {
+      url = "core/create_route/";
+    }
+
     const data = {deliveryDate: today, carCount: carCount, isAm: isAm};
     return await axios.post(url, data, config)
   }
@@ -175,19 +186,24 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
           <DialogContentText className={classes.titleText}>배차시작</DialogContentText>
         </DialogTitle>
         <DialogContent>
+          <DialogContentText>
+            <FormControlLabel onChange={handleChecked} checked={isAutoChecked} control={<Switch/>} label="자동배차"/>
+          </DialogContentText>
           <DialogContentText className={classes.content}>
             {today} {isAm ? '오전' : '오후'} 배차를 시작 하시겠습니까?
           </DialogContentText>
-          <TextField
-            onChange={(event) => setCarCount(event.target.value)}
-            value={carCount}
-            autoFocus
-            margin="dense"
-            id="carCount"
-            label="차량배차대수"
-            type="number"
-            fullWidth
-          />
+          {isAutoChecked ? (
+            <TextField
+              onChange={(event) => setCarCount(event.target.value)}
+              value={carCount}
+              autoFocus
+              margin="dense"
+              id="carCount"
+              label="차량배차대수"
+              type="number"
+              fullWidth
+            />
+          ) : null}
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="default" variant={"outlined"}>

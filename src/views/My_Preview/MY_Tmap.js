@@ -21,6 +21,7 @@ function MY_Tmap({fetchOrderData, orders, map, markers, setMarkers}) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [order, setOrder] = React.useState(null);
+  const [popups, setPopups] = useState([]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -36,7 +37,7 @@ function MY_Tmap({fetchOrderData, orders, map, markers, setMarkers}) {
       handleClickOpen();
     });
   }
-  const drawMarker = (order, orderIndex) => {
+  const drawMarker = (order, orderIndex, _popups) => {
     let courseNumber = order.courseNumber;
 
     if (courseNumber === 0 || courseNumber === null) {
@@ -48,6 +49,7 @@ function MY_Tmap({fetchOrderData, orders, map, markers, setMarkers}) {
         visible: true,
         map: map
       });
+      _popups.push(popup);
       courseNumber = 999;
     }
 
@@ -67,13 +69,20 @@ function MY_Tmap({fetchOrderData, orders, map, markers, setMarkers}) {
   useEffect(() => {
     if (map && orders.length > 0) {
       markers.map(marker => marker.setMap(null));
+      popups.map(popup => popup.setMap(null));
 
       const _markers = [];
+      const _popups = [];
+
       drawStartMaker(map, startLat, startLon);
+
       for (let i = 0; i < orders.length; i++) {
-        _markers.push(drawMarker(orders[i], i + 1));
+        _markers.push(drawMarker(orders[i], i + 1, _popups));
       }
+
       setMarkers(_markers);
+      setPopups(_popups);
+
       map.setCenter(new window.Tmapv2.LatLng(startLat, startLon));
     }
 
