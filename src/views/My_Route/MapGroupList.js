@@ -99,12 +99,12 @@ export default function MapGroupList({reDraw, mapGroups, checked, setChecked, mo
 
       <LoadingBar/>
 
-      {mapGroups.map((mapGroup, index) => {
+      {mapGroups.filter(mapGroup => mapGroup.length > 0).map((mapGroup, index) => {
         const labelId = `checkbox-list-secondary-label-${index}`;
         return (
           <Card key={index}>
             <CardHeader
-              title={`${index + 1}번`}
+              title={`${mapGroup[0].route_number}번`}
               action={
                 <Button size={"small"}
                         variant={"contained"}
@@ -126,18 +126,17 @@ export default function MapGroupList({reDraw, mapGroups, checked, setChecked, mo
               <ListItemAvatar>
                 <Avatar
                   classes={{root: classes.avatarRoot, img: classes.avatar}}
-                  alt={`Avatar n°${index + 1}`}
-                  // src={`/images/makers/marker_${mapGroup[0].route_number}.png`}
-                  src={`/images/makers/marker_${index + 1}.png`}
+                  alt={`Avatar n°${mapGroup[0].route_number}`}
+                  src={`/images/makers/marker_${mapGroup[0].route_number}.png`}
                 />
               </ListItemAvatar>
-              <ListItemText onClick={() => handleOpen(index)} classes={{secondary: classes.textSecondary}}
+              <ListItemText onClick={() => handleOpen(mapGroup[0].route_number - 1)} classes={{secondary: classes.textSecondary}}
                             primary={`운행거리`}
                             secondary={(getTotalDistance(mapGroup) / 1000).toFixed(1) + 'km'}/>
-              <ListItemText onClick={() => handleOpen(index)} classes={{secondary: classes.textSecondary}}
+              <ListItemText onClick={() => handleOpen(mapGroup[0].route_number - 1)} classes={{secondary: classes.textSecondary}}
                             primary={`배송건수`}
                             secondary={mapGroup.length + '건'}/>
-              <ListItemText onClick={() => handleOpen(index)} classes={{secondary: classes.textSecondary}}
+              <ListItemText onClick={() => handleOpen(mapGroup[0].route_number - 1)} classes={{secondary: classes.textSecondary}}
                             primary={`배송금액`}
                             secondary={getThousand(getOrderTotalPrice(mapGroup)) + '원'}/>
             </ListItem>

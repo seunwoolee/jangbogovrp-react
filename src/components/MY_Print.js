@@ -61,7 +61,7 @@ function MY_Print() {
   };
 
   useEffect(() => {
-    fetchRoute().then(setTimeout(() => window.print(), 500));
+    fetchRoute().then(setTimeout(() => window.print(), 2500));
   }, []);
 
   const tableRows = (geoData) => {
@@ -105,7 +105,7 @@ function MY_Print() {
         <>
           {mapGroups.map((mapGroup, index) => (
             mapGroup.length > 0 ? (
-              <TableContainer className={classes.tableContainer} component={Paper}>
+              <TableContainer key={index} className={classes.tableContainer} component={Paper}>
                 <Typography variant="h3" component="h4">{index + 1}번</Typography>
                 <Table>
                   <TableHead className={classes.tableHead}>
