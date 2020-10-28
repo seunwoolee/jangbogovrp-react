@@ -110,10 +110,12 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
   }
 
   const tableRows = (geoData) => {
+    console.log(geoData);
     const content = [];
     for (let i = 0; i < geoData.orders.length; i++) {
       content.push((
         <TableRow key={geoData.orders[i].id}>
+          <TableCell align="center">{geoData.route_number}</TableCell>
           <TableCell align="center">{geoData.route_index}</TableCell>
           <TableCell align="center">{geoData.customer_info.name}</TableCell>
           <TableCell align="center">{geoData.customer_info.address}</TableCell>
@@ -168,22 +170,17 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>경로순서</TableCell>
-                <TableCell>주문자명</TableCell>
-                <TableCell>주소</TableCell>
-                <TableCell>금액</TableCell>
+                <TableCell align="center">코스번호</TableCell>
+                <TableCell align="center">경로순서</TableCell>
+                <TableCell align="center">주문자명</TableCell>
+                <TableCell align="center">주소</TableCell>
+                <TableCell align="center">금액</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {geoDatas.map((geoData, index) => (
                 <Fragment key={index}>
                   {tableRows(geoData).map(content => content)}
-                  {/*<TableRow>*/}
-                  {/*  <TableCell align="center">{geoData.route_index}</TableCell>*/}
-                  {/*  <TableCell align="center">{geoData.customer_info.name}</TableCell>*/}
-                  {/*  <TableCell align="center">{geoData.customer_info.address}</TableCell>*/}
-                  {/*  <TableCell align="center">{getThousand(getOrderTotalPrice(geoData.orders)) + '원'}</TableCell>*/}
-                  {/*</TableRow>*/}
                 </Fragment>
               ))}
             </TableBody>
