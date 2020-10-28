@@ -105,11 +105,20 @@ export default function Result({fetchRoute, mapGroups, groupLines, groupMarkers,
   }, [checked]);
 
   const printRoute = () => {
+    let routeM = 0;
+    for (let i = 0; i < mapGroups.length; i++) {
+      if (mapGroups[i][0]) {
+        routeM = mapGroups[i][0].route_m;
+        break;
+      }
+    }
+
     window.open(
-      `/printRoute?routeM=${mapGroups[0][0].route_m}`,
+      `/printRoute?routeM=${routeM}`,
       "_blank",
       "width=700,height=700"
     );
+
   };
 
   return (
@@ -128,7 +137,8 @@ export default function Result({fetchRoute, mapGroups, groupLines, groupMarkers,
               {lineVisible ? '경로선 제거' : '경로선 표시'}
             </Button>
           </>}/>
-      <MapGroupList reDraw={fetchRoute} mapGroups={mapGroups} checked={checked} setChecked={setChecked} moveTo={moveTo}/>
+      <MapGroupList reDraw={fetchRoute} mapGroups={mapGroups} checked={checked} setChecked={setChecked}
+                    moveTo={moveTo}/>
     </Paper>
   );
 }

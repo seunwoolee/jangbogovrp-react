@@ -25,6 +25,10 @@ const useStyles = makeStyles((theme) => ({
     outline: 'none',
     boxShadow: theme.shadows[20],
     width: 1200,
+    [theme.breakpoints.up('lg')]: {
+      left: '30%',
+      width: 950,
+    },
     // height: 820,
     maxHeight: '100%',
     overflow: 'scroll',

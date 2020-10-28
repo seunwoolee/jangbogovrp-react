@@ -61,7 +61,7 @@ function MY_Print() {
   };
 
   useEffect(() => {
-    fetchRoute().then(() => window.print());
+    fetchRoute().then(setTimeout(() => window.print(), 500));
   }, []);
 
   const tableRows = (geoData) => {
@@ -72,7 +72,8 @@ function MY_Print() {
           <TableCell size={"small"} align="center">{geoData.route_index}</TableCell>
           <TableCell size={"small"} align="center">{geoData.customer_info.name}</TableCell>
           <TableCell size={"small"} align="center">{geoData.customer_info.address}</TableCell>
-          <TableCell className={classes.tableCellContent} size={"small"} align="center">{getThousand(geoData.orders[i].price) + '원'}</TableCell>
+          <TableCell className={classes.tableCellContent} size={"small"}
+                     align="center">{getThousand(geoData.orders[i].price) + '원'}</TableCell>
         </TableRow>
       ))
     }
@@ -93,7 +94,7 @@ function MY_Print() {
         <TableCell colSpan={3} size={"small"} align="center">{'합계'}</TableCell>
         <TableCell size={"small"} align="center">{getThousand(price) + '원'}</TableCell>
       </TableRow>
-  )
+    )
 
   }
 
@@ -103,32 +104,34 @@ function MY_Print() {
       {mapGroups.length > 0 ? (
         <>
           {mapGroups.map((mapGroup, index) => (
-            <TableContainer className={classes.tableContainer} component={Paper}>
-              <Typography variant="h3" component="h4">{index + 1}번</Typography>
-              <Table>
-                <TableHead className={classes.tableHead}>
-                  <TableRow className={classes.tableRow}>
-                    <TableCell size={"small"} align={"center"}>No</TableCell>
-                    <TableCell size={"small"} align={"center"}>주문자명</TableCell>
-                    <TableCell size={"small"} align={"center"}>주소</TableCell>
-                    <TableCell size={"small"} align={"center"}>금액</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {mapGroup.sort((a, b) => a.route_index - b.route_index).map((row, index) => (
-                    <Fragment key={row.route_index}>
-                      {tableRows(row).map(content => content)}
-                    </Fragment>
-                  ))}
-                  {getGroupPrice(mapGroup)}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            mapGroup.length > 0 ? (
+              <TableContainer className={classes.tableContainer} component={Paper}>
+                <Typography variant="h3" component="h4">{index + 1}번</Typography>
+                <Table>
+                  <TableHead className={classes.tableHead}>
+                    <TableRow className={classes.tableRow}>
+                      <TableCell size={"small"} align={"center"}>No</TableCell>
+                      <TableCell size={"small"} align={"center"}>주문자명</TableCell>
+                      <TableCell size={"small"} align={"center"}>주소</TableCell>
+                      <TableCell size={"small"} align={"center"}>금액</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {mapGroup.sort((a, b) => a.route_index - b.route_index).map((row, index) => (
+                      <Fragment key={row.route_index}>
+                        {tableRows(row).map(content => content)}
+                      </Fragment>
+                    ))}
+                    {getGroupPrice(mapGroup)}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ) : null
           ))}
         </>
       ) : null}
     </>
   );
-  }
+}
 
-  export default MY_Print;
+export default MY_Print;

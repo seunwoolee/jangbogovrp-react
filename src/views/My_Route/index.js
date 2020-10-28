@@ -72,9 +72,6 @@ function MY_Route() {
 
   };
 
-  // const getRoute = async (url, config) => {
-  //   return await axios.get(url, config)
-  // }
 
   useEffect(() => {
     if (!(localStorage.getItem('token'))) {
@@ -93,8 +90,6 @@ function MY_Route() {
     }));
   }, []);
 
-
-  console.log(geoDatas, mapGroups);
 
   return (
     <Page

@@ -37,6 +37,7 @@ function MY_Tmap({fetchOrderData, orders, map, markers, setMarkers}) {
       handleClickOpen();
     });
   }
+
   const drawMarker = (order, orderIndex, _popups) => {
     let courseNumber = order.courseNumber;
 
