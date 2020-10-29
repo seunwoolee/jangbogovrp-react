@@ -89,16 +89,15 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
 
   const saveToErp = async (orderNumber, lat, lon) => {
     const url = "customer/save_geolocation/";
-    let params = {
+    let data = {
       orderNumber: orderNumber,
       lat: lat,
       lon: lon,
     }
     const config = {
       headers: {Authorization: `Token ${localStorage.getItem('token')}`},
-      params: params
     };
-    return await axios.get(url, config)
+    return await axios.post(url, data, config);
   }
 
   return (
