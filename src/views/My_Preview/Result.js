@@ -43,39 +43,24 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
     setTimeout(() => map.zoomOut(), 200);
   }
 
-  const saveGeolocationToErp = () => {
+  const saveGeolocationToErp = async () => {
     if (window.confirm('좌표를 수집 하시겠습니까?')) {
       const url = "customer/preview_order/";
+      let response = null;
       const config = {
         headers: {Authorization: `Token ${localStorage.getItem('token')}`},
         params: {isAm: isAm}
       };
 
       dispatch(isloading(true));
-      axios.get(url, config)
-        .then(res => {
-          return res.data
-        })
-        .then(missingAddressGeolocations => {
-          return getGeolocationRecursive(missingAddressGeolocations);
-        })
-        .catch(err => {
-          fetchOrderData();
-        });
-    }
-  }
 
-  const getGeolocationRecursive = (missingAddressGeolocations) => {
-    const missingAddressGeolocation = missingAddressGeolocations.pop();
-
-    if (missingAddressGeolocation === undefined) {
-      return fetchOrderData();
-    }
-
-    setTimeout(() => {
-      getGeolocationByTmap(missingAddressGeolocation)
-        .then(response => {
-          const coordinateInfo = response.data.coordinateInfo;
+      try {
+        response = await axios.get(url, config);
+        const customers = response.data;
+        for (let i = 0; i < customers.length; i++) {
+          console.log(customers[i]);
+          const tmapResponse = await getGeolocationByTmap(customers[i]);
+          const coordinateInfo = tmapResponse.data.coordinateInfo;
           const coordinate = coordinateInfo.coordinate[0];
           let lat = coordinate.lat;
           let lon = coordinate.lon;
@@ -83,13 +68,14 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
             lat = coordinate.newLat;
             lon = coordinate.newLon;
           }
-          return saveToErp(missingAddressGeolocation.orderNumber, lat, lon);
-        })
-        .catch(err => {
-          console.log(missingAddressGeolocation);
-        })
-      getGeolocationRecursive(missingAddressGeolocations);
-    }, 200)
+          saveToErp(customers[i].orderNumber, lat, lon);
+        }
+        fetchOrderData();
+      } catch (e) {
+        console.log(e);
+        fetchOrderData();
+      }
+    }
   }
 
   const getGeolocationByTmap = async (geolocation) => {
@@ -143,7 +129,7 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
               </TableRow>
 
               <TableRow hover className={clsx(
-                classes.tableRows, !(order.lon && order.lat) ? classes.missingAddressRow : null) }
+                classes.tableRows, !(order.lon && order.lat) ? classes.missingAddressRow : null)}
                         onClick={() => order.lon && order.lat ? moveTo(order.lon, order.lat) : null}>
                 <TableCell align="center">
                   {order.id}

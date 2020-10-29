@@ -12,8 +12,6 @@ import {
   Divider,
   Button, Table, TableBody, TableRow, TableCell, TableHead
 } from '@material-ui/core';
-import Tooltip from "@material-ui/core/Tooltip";
-import {NavLink as RouterLink} from "react-router-dom";
 import getThousand from "../../../utils/getThousand";
 
 const useStyles = makeStyles((theme) => ({
