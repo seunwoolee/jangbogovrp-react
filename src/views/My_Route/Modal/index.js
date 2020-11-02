@@ -13,6 +13,7 @@ import {
   Button, Table, TableBody, TableRow, TableCell, TableHead
 } from '@material-ui/core';
 import getThousand from "../../../utils/getThousand";
+import OrdersDialog from "./Dialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,11 +24,6 @@ const useStyles = makeStyles((theme) => ({
     outline: 'none',
     boxShadow: theme.shadows[20],
     width: 1200,
-    [theme.breakpoints.up('lg')]: {
-      left: '30%',
-      width: 950,
-    },
-    // height: 820,
     maxHeight: '100%',
     overflow: 'scroll',
     maxWidth: '100%'
@@ -67,7 +63,17 @@ export const getOrderPrice = (orders) => {
 
 function Index({open, onClose, className, mapGroup, moveTo}) {
   const classes = useStyles();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedOrders, setSelectedOrders] = useState(null);
 
+  const handleClicked = (row) => {
+    setDialogOpen(true);
+    setSelectedOrders(row.orders);
+  }
+
+  const handleClosed = () => {
+    setDialogOpen(false);
+  }
 
   return (
     <>
@@ -107,7 +113,7 @@ function Index({open, onClose, className, mapGroup, moveTo}) {
                       {mapGroup.sort((a, b) => a.route_index - b.route_index).map((row, index) => (
                         <Fragment key={row.route_index}>
                           <TableRow className={classes.tableRow} hover
-                                    onClick={() => moveTo(row.customer_info.longitude, row.customer_info.latitude)}>
+                                    onClick={() => handleClicked(row)}>
                             <TableCell align="center">{row.route_index}</TableCell>
                             <TableCell align="center">{row.customer_info.name}</TableCell>
                             <TableCell align="center">{row.customer_info.address}</TableCell>
@@ -127,9 +133,11 @@ function Index({open, onClose, className, mapGroup, moveTo}) {
               </Button>
             </CardActions>
           </form>
-
         </Card>
       </Modal>
+
+      {dialogOpen ? <OrdersDialog open={dialogOpen} onClose={handleClosed} selectedOrders={selectedOrders}/> : null}
+
     </>
   );
 }
