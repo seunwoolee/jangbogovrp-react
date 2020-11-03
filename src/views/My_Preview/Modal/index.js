@@ -174,7 +174,7 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
 
   const create_customer = async () => {
     const url = "customer/create_customers/";
-    const data = {isAm: isAm};
+    const data = {isAm: isAm, isAuto: isAutoChecked};
     return await axios.post(url, data, config);
   }
 
