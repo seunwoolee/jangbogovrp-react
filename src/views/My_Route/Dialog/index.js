@@ -64,7 +64,11 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
   const [add, setAdd] = useState(0);
 
   const handleSubmit = async () => {
-    await changeRouteNumber();
+    try {
+      await changeRouteNumber();
+    } catch (e) {
+      alert('경로 그리기 실행 후 다시 시도해주세요');
+    }
     onClose();
     fetchRoute();
   }
@@ -76,11 +80,12 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
   const changeRouteNumber = async () => {
     const config = {headers: {Authorization: `Token ${localStorage.getItem('token')}`}};
     const url = "delivery/routeDManualUpdate/";
+    const route = geoDatas.find(geoData => geoData.route_number !== newRouteNumber);
     const data = {
-      route_m_id: geoDatas[0].route_m,
+      route_m_id: route.route_m,
       to_route_number: newRouteNumber,
-      from_route_number: geoDatas[0].route_number,
-      current_route_index: geoDatas[0].route_index,
+      from_route_number: route.route_number,
+      current_route_index: route.route_index,
       is_duplicated: geoDatas.length > 1,
     };
     return await axios.post(url, data, config);
