@@ -48,6 +48,11 @@ export const create_routeOrder = async (routeM: number, routeNumber: number) => 
 
   response = await axios.get(url, config);
   const rows = response.data;
+
+  if (rows.length === 0) {
+    return
+  }
+
   const viaPoints = [];
   for (let i = 0; i < rows.length; i++) {
     const viaPoint = {};
@@ -110,6 +115,7 @@ export const create_routeOrder = async (routeM: number, routeNumber: number) => 
     console.log(e)
   }
 
+  return routeNumber;
 }
 
 function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess, setInfo}) {
@@ -151,14 +157,20 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
     try {
       for (let i = 1; i <= maxRouteNumber; i++) {
         await timeout(30);
-        response = await create_routeOrder(routeMId, i);
+        create_routeOrder(routeMId, i).then(r => {
+          if (r === maxRouteNumber) {
+            setTimeout(() => {
+              return history.push('/route/' + String(routeMId));
+            }, 300)
+          }
+        });
       }
     } catch (error) {
       dispatch(isloading(false));
       return onComplete(false, 'Tmap 다중 경유지 생성 실패, 개발팀 문의 바랍니다.');
     }
 
-    return history.push('/route/' + String(routeMId));
+
   };
 
 
