@@ -70,7 +70,7 @@ export default function ChangePasswordDialog({open, onClose}) {
         setIsSuccess(false);
         setInfo('실패(전산팀 문의)');
         setSnackbarOpen(true);
-      }); // TODO 에러남기기
+      });
   };
 
   const deleteSubscriptionOnServer = (subscription) => {
@@ -88,7 +88,7 @@ export default function ChangePasswordDialog({open, onClose}) {
         setIsSuccess(false);
         setInfo('실패(전산팀 문의)');
         setSnackbarOpen(true);
-      }); // TODO 에러남기기
+      });
   };
 
   const setPushSubscribe = () => {
@@ -186,7 +186,7 @@ export default function ChangePasswordDialog({open, onClose}) {
         setIsSuccess(false);
         setInfo('에러 발생(네트워크 상태 확인)');
         setSnackbarOpen(true);
-      }); // TODO 에러 로깅
+      });
   };
 
   const handleClose = () => {

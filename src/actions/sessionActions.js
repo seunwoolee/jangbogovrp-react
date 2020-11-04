@@ -50,12 +50,10 @@ export const getUserData = (token) => dispatch => {
     'Content-Type': 'application/json',
     'Authorization': 'Token ' + token
   }
-  const axiosConfig = {
-    headers: headers
-  };
-  const data = {token: token};
-  const url = 'employee/get_employee/';
-  return axios.post(url, data, axiosConfig)
+  const config = {headers: headers};
+
+  const url = 'company/get_company/';
+  return axios.get(url, config)
     .then(res => {
       dispatch(authSuccess(res.data));
       return res;
@@ -68,11 +66,15 @@ export const login = (username: string, password: string) => dispatch => {
     username,
     password,
   };
+
   return axios.post('rest-auth/login/', authData)
     .then(res => {
       const token = res.data.key;
-      dispatch(getUserData(token))
-      return res;
+      const expirationDate = new Date(new Date().getTime() + EXPIRATIONDATE * 100000000);
+      localStorage.setItem('token', token);
+      localStorage.setItem('expirationDate', expirationDate);
+      return dispatch(getUserData(token))
+      // return res;
     })
     .catch(error => (error.response));
 };

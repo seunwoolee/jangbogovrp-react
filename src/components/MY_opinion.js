@@ -71,7 +71,7 @@ function MY_opinion({ signs, className, ...rest }) {
               <ListItemAvatar>
                 <Avatar
                   alt="사진"
-                  src={`${avatar_URL}${sign.user.avatar}`} // TODO URL 변경 필요
+                  src={`${avatar_URL}${sign.user.avatar}`}
                 >
                   {getInitials(sign.user.name)}
                 </Avatar>

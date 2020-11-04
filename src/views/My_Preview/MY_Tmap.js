@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {makeStyles} from '@material-ui/styles';
 import {createHtmlicon, drawStartMaker} from "../My_Route/MY_Tmap";
 import DialogIndex from "./Dialog";
+import {useDispatch, useSelector} from "react-redux";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -12,16 +13,12 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-export const pr_3857 = new window.Tmap.Projection("EPSG:3857");
-export const pr_4326 = new window.Tmap.Projection("EPSG:4326");
-export const startLon = 128.539506;
-export const startLat = 35.929894;
-
 function MY_Tmap({fetchOrderData, orders, map, markers, setMarkers}) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [order, setOrder] = React.useState(null);
   const [popups, setPopups] = useState([]);
+  const session = useSelector((state) => state.session);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -75,7 +72,7 @@ function MY_Tmap({fetchOrderData, orders, map, markers, setMarkers}) {
       const _markers = [];
       const _popups = [];
 
-      drawStartMaker(map, startLat, startLon);
+      drawStartMaker(map, session.user.latitude, session.user.longitude);
 
       for (let i = 0; i < orders.length; i++) {
         _markers.push(drawMarker(orders[i], i + 1, _popups));
@@ -83,7 +80,6 @@ function MY_Tmap({fetchOrderData, orders, map, markers, setMarkers}) {
 
       setMarkers(_markers);
       setPopups(_popups);
-
     }
 
   }, [orders])

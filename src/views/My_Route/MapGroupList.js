@@ -16,7 +16,7 @@ import Index from "./Modal";
 import {create_routeOrder} from "../My_Preview/Modal";
 import LoadingBar from "../../components/MY_LoadingBar";
 import Page from "../../components/Page";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {isloading} from "../../actions";
 
 const useStyles = makeStyles((theme) => ({
@@ -43,11 +43,12 @@ export default function MapGroupList({reDraw, mapGroups, checked, setChecked, mo
   const [open, setOpen] = useState(false);
   const [detailIndex, setDetailIndex] = useState(0);
   const dispatch = useDispatch();
+  const session = useSelector((state) => state.session);
 
   const handleRedraw = async (routeM, routeNumber) => {
     if (window.confirm('경로를 다시 그리겠습니까?')) {
       dispatch(isloading(true));
-      await create_routeOrder(routeM, routeNumber);
+      await create_routeOrder(routeM, routeNumber, Number(session.user.latitude), Number(session.user.longitude));
       dispatch(isloading(false));
       return reDraw();
     }
@@ -118,8 +119,8 @@ export default function MapGroupList({reDraw, mapGroups, checked, setChecked, mo
               <ListItemIcon>
                 <Checkbox
                   edge="end"
-                  onChange={handleToggle(index)}
-                  checked={checked.indexOf(index) !== -1}
+                  onChange={handleToggle(mapGroup[0].route_number - 1)}
+                  checked={checked.indexOf(mapGroup[0].route_number - 1) !== -1}
                   inputProps={{'aria-labelledby': labelId}}
                 />
               </ListItemIcon>

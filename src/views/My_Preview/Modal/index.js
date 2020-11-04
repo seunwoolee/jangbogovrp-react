@@ -13,9 +13,8 @@ import axios from "../../../utils/my_axios";
 import {getTodoCount, isloading} from "../../../actions";
 import {APIKEY} from "../../../my_config";
 import globalAxios from "axios";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useHistory} from "react-router";
-import {startLat, startLon} from "../MY_Tmap";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 
@@ -37,7 +36,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 
-export const create_routeOrder = async (routeM: number, routeNumber: number) => {
+export const create_routeOrder = async (routeM: number, routeNumber: number, startLat: number, startLon: number) => {
   const url = "delivery/routeD/";
   let params = {routeM: routeM, routeNumber: routeNumber};
   let response = null;
@@ -125,6 +124,7 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
+  const session = useSelector((state) => state.session);
 
   const config = {headers: {Authorization: `Token ${localStorage.getItem('token')}`}};
   const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -157,13 +157,14 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
     try {
       for (let i = 1; i <= maxRouteNumber; i++) {
         await timeout(30);
-        create_routeOrder(routeMId, i).then(r => {
-          if (r === maxRouteNumber) {
-            setTimeout(() => {
-              return history.push('/route/' + String(routeMId));
-            }, 300)
-          }
-        });
+        create_routeOrder(routeMId, i, Number(session.user.latitude), Number(session.user.longitude))
+          .then(r => {
+            if (r === maxRouteNumber) {
+              setTimeout(() => {
+                return history.push('/route/' + String(routeMId));
+              }, 1000)
+            }
+          });
       }
     } catch (error) {
       dispatch(isloading(false));

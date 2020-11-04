@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/styles';
 import {Container} from '@material-ui/core';
 import Page from 'src/components/Page';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useHistory, useParams} from "react-router";
 import axios from "../../utils/my_axios";
 
@@ -11,8 +11,7 @@ import {isloading} from "../../actions";
 import Grid from "@material-ui/core/Grid";
 import Result from "./Result";
 import LoadingBar from "../../components/MY_LoadingBar";
-import MY_Tmap from "./MY_Tmap";
-import {startLat, startLon} from "../My_Preview/MY_Tmap";
+import MY_Tmap, {drawStartMaker} from "./MY_Tmap";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,6 +44,7 @@ export const getRoute = async (url, config) => {
 function MY_Route() {
   const classes = useStyles();
   const history = useHistory();
+  const session = useSelector((state) => state.session);
   const dispatch = useDispatch();
   const param = useParams();
   const [map, setMap] = useState(null);
@@ -64,31 +64,33 @@ function MY_Route() {
     const response = await getRoute("delivery/maps/", config);
     dispatch(isloading(false));
 
-    const maxRouteNumber = Math.max(...response.data.route_d.map(d => d.route_number));
-    const newMapGroups = createGroupMaps(maxRouteNumber, response.data.route_d);
+    // const maxRouteNumber = Math.max(...response.data.route_d.map(d => d.route_number));
+    const newMapGroups = createGroupMaps(20, response.data.route_d); // TODO 하드코딩
 
     setGeoDatas(response.data.route_d);
     setMapGroups(newMapGroups);
 
   };
 
-
   useEffect(() => {
     if (!(localStorage.getItem('token'))) {
       history.push('/auth/login');
     }
+
     fetchRoute();
   }, []);
 
   useEffect(() => {
-    setMap(new window.Tmapv2.Map("myTmap", {
-      center: new window.Tmapv2.LatLng(startLat, startLon),
-      height: '750px',
-      transitionEffect: "resize",
-      animation: true,
-      zoom: 12
-    }));
-  }, []);
+    if (session.user.latitude && !map) {
+      setMap(new window.Tmapv2.Map("myTmap", {
+        center: new window.Tmapv2.LatLng(session.user.latitude, session.user.longitude),
+        height: '750px',
+        transitionEffect: "resize",
+        animation: true,
+        zoom: 12
+      }));
+    }
+  }, [session]);
 
 
   return (

@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {makeStyles} from '@material-ui/styles';
 import DialogIndex from "./Dialog";
+import {useSelector} from "react-redux";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -74,14 +75,12 @@ export const routeColor = [
   "#4b7449", // 19
   "#ba4097", // 20
 ];
-// TODO CourseNum이 null or 0 이면 흰색으로 처리 해줘야한다
 
 function MY_Tmap({fetchRoute, geoDatas, groupGeoDatas, groupMarkers, setGroupMarkers, groupLines, setGroupLines, map}) {
   const classes = useStyles();
-  const startLon = 128.539506;
-  const startLat = 35.929894;
   const [open, setOpen] = React.useState(false);
   const [selectedGeoData, setSelectedGeoData] = React.useState([]);
+  const session = useSelector((state) => state.session);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -164,7 +163,8 @@ function MY_Tmap({fetchRoute, geoDatas, groupGeoDatas, groupMarkers, setGroupMar
       const _groupMarkers = [];
       const _groupLines = [];
 
-      drawStartMaker(map, startLat, startLon);
+      drawStartMaker(map, session.user.latitude, session.user.longitude);
+      console.log(groupGeoDatas);
       for (let i = 0; i < groupGeoDatas.length; i++) {
         drawMarker(_groupMarkers, groupGeoDatas[i]);
       }

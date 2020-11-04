@@ -12,7 +12,7 @@ import Header from './Header';
 import {isloading} from "../../actions";
 import Result from "./Result";
 import LoadingBar from "../../components/MY_LoadingBar";
-import MY_Tmap, {startLat, startLon} from "./MY_Tmap";
+import MY_Tmap from "./MY_Tmap";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,6 +28,7 @@ function Preview() {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
+  const session = useSelector((state) => state.session);
   const [orderData, setOrderData] = useState([]);
   const [markers, setMarkers] = useState([]);
   const [map, setMap] = useState(null);
@@ -56,17 +57,21 @@ function Preview() {
     if (!(localStorage.getItem('token'))) {
       history.push('/auth/login');
     }
-
-    setMap(new window.Tmapv2.Map("myTmap", {
-      center: new window.Tmapv2.LatLng(startLat, startLon),
-      height: '750px',
-      transitionEffect: "resize",
-      animation: true,
-      zoom: 12
-    }));
-
-    fetchOrderData();
   }, []);
+
+  useEffect(() => {
+    if (session.user.latitude && !map) {
+      setMap(new window.Tmapv2.Map("myTmap", {
+        center: new window.Tmapv2.LatLng(Number(session.user.latitude), Number(session.user.longitude)),
+        height: '750px',
+        transitionEffect: "resize",
+        animation: true,
+        zoom: 12
+      }));
+
+      fetchOrderData();
+    }
+  }, [session]);
 
   useEffect(() => {
     fetchOrderData();
@@ -92,7 +97,8 @@ function Preview() {
         <Grid container spacing={1}>
           <Grid item xs={12} lg={9}>
             {/* eslint-disable-next-line react/jsx-pascal-case */}
-            <MY_Tmap fetchOrderData={fetchOrderData} orders={orderData} map={map} markers={markers} setMarkers={setMarkers}/>
+            <MY_Tmap fetchOrderData={fetchOrderData} orders={orderData} map={map} markers={markers}
+                     setMarkers={setMarkers}/>
           </Grid>
           <Grid item xs={12} lg={3}>
             <Result orders={orderData} fetchOrderData={fetchOrderData} map={map} isAm={isAm} setIsAm={setIsAm}/>
