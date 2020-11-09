@@ -28,13 +28,13 @@ function Header({ className, ...rest }) {
             gutterBottom
             variant="overline"
           >
-            오늘 배송지점을 미리 확인
+            오늘 배차 내역 보기
           </Typography>
           <Typography
             component="h1"
             variant="h3"
           >
-            배송 지역 미리보기
+            배차 내역
           </Typography>
         </Grid>
       </Grid>

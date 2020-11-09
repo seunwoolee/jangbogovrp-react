@@ -136,7 +136,7 @@ function Index({open, onClose, className, mapGroup, moveTo}) {
         </Card>
       </Modal>
 
-      {dialogOpen ? <OrdersDialog open={dialogOpen} onClose={handleClosed} selectedOrders={selectedOrders}/> : null}
+      {dialogOpen ? <OrdersDialog open={dialogOpen} onClose={handleClosed} selectedOrders={selectedOrders} /> : null}
 
     </>
   );

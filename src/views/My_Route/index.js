@@ -4,11 +4,11 @@ import {Container} from '@material-ui/core';
 import Page from 'src/components/Page';
 import {useDispatch, useSelector} from "react-redux";
 import {useHistory, useParams} from "react-router";
+import Grid from "@material-ui/core/Grid";
 import axios from "../../utils/my_axios";
 
 import Header from './Header';
 import {isloading} from "../../actions";
-import Grid from "@material-ui/core/Grid";
 import Result from "./Result";
 import LoadingBar from "../../components/MY_LoadingBar";
 import MY_Tmap, {drawStartMaker} from "./MY_Tmap";
@@ -35,11 +35,11 @@ export const createGroupMaps = (maxRouteNumber, routeds) => {
   }
 
   return newMapGroups;
-}
+};
 
 export const getRoute = async (url, config) => {
-  return await axios.get(url, config)
-}
+  return await axios.get(url, config);
+};
 
 function MY_Route() {
   const classes = useStyles();
@@ -66,7 +66,6 @@ function MY_Route() {
 
     // const maxRouteNumber = Math.max(...response.data.route_d.map(d => d.route_number));
     const newMapGroups = createGroupMaps(20, response.data.route_d); // TODO 하드코딩
-
     setGeoDatas(response.data.route_d);
     setMapGroups(newMapGroups);
 
@@ -96,7 +95,7 @@ function MY_Route() {
   return (
     <Page
       className={classes.root}
-      title="배송지역 미리보기"
+      title="배차내역"
     >
 
       <LoadingBar/>

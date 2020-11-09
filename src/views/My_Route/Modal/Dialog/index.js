@@ -41,11 +41,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-
 function OrdersDialog({open, onClose, selectedOrders}) {
   const classes = useStyles();
   const [orders, setOrders] = useState([]);
-
 
   useEffect(() => {
     async function fetchData() {
@@ -62,8 +60,11 @@ function OrdersDialog({open, onClose, selectedOrders}) {
       return response.data;
     }
 
-    fetchData().then(orders => setOrders(orders));
-  }, [])
+    if (selectedOrders.length > 0) {
+      fetchData().then(orders => setOrders(orders));
+    }
+
+  }, []);
 
   return (
     <div>

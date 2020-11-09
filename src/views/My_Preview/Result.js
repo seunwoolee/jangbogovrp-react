@@ -58,7 +58,6 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
         response = await axios.get(url, config);
         const customers = response.data;
         for (let i = 0; i < customers.length; i++) {
-          console.log(customers[i]);
           const tmapResponse = await getGeolocationByTmap(customers[i]);
           const coordinateInfo = tmapResponse.data.coordinateInfo;
           const coordinate = coordinateInfo.coordinate[0];
