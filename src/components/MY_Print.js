@@ -66,6 +66,20 @@ function MY_Print() {
 
   const tableRows = (geoData) => {
     const content = [];
+
+    if (geoData.orders.length === 0) {
+      content.push((
+        <TableRow className={classes.tableRow}>
+          <TableCell size={"small"} align="center">{geoData.route_index}</TableCell>
+          <TableCell size={"small"} align="center">{geoData.customer_info.name}</TableCell>
+          <TableCell size={"small"} align="center">{geoData.customer_info.address}</TableCell>
+          <TableCell size={"small"} align="center" className={classes.tableCellContent} >0원</TableCell>
+        </TableRow>
+      ));
+
+      return content;
+    }
+
     for (let i = 0; i < geoData.orders.length; i++) {
       content.push((
         <TableRow key={geoData.orders[i].id} className={classes.tableRow}>
