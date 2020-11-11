@@ -214,11 +214,11 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
           <Button onClick={onClose} color="default" variant="outlined">
             닫기
           </Button>
-          <Button onClick={handleSubmit} color="secondary" variant="outlined">
-            확인
-          </Button>
           <Button className={classes.removeButton} onClick={handleRemove} variant="outlined">
             삭제
+          </Button>
+          <Button onClick={handleSubmit} color="secondary" variant="outlined">
+            확인
           </Button>
         </DialogActions>
       </Dialog>

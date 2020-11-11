@@ -120,7 +120,7 @@ function MY_Print() {
           {mapGroups.map((mapGroup, index) => (
             mapGroup.length > 0 ? (
               <TableContainer key={index} className={classes.tableContainer} component={Paper}>
-                <Typography variant="h3" component="h4">{index + 1}번</Typography>
+                <Typography variant="h3" component="h4">{index + 1}번  {mapGroup[0].driver ? mapGroup[0].driver.name : ''}</Typography>
                 <Table>
                   <TableHead className={classes.tableHead}>
                     <TableRow className={classes.tableRow}>

@@ -105,7 +105,7 @@ export default function MapGroupList({reDraw, mapGroups, checked, setChecked, mo
         return (
           <Card key={index}>
             <CardHeader
-              title={`${mapGroup[0].route_number}번`}
+              title={`${mapGroup[0].route_number}번 ${mapGroup[0].driver ? mapGroup[0].driver.name : ''}`}
               action={
                 <Button size={"small"}
                         variant={"contained"}
@@ -146,7 +146,7 @@ export default function MapGroupList({reDraw, mapGroups, checked, setChecked, mo
       })}
 
       {mapGroups.length > 0 ?
-        <Index open={open} onClose={handleClose} mapGroup={mapGroups[detailIndex]} moveTo={moveTo}/> : null}
+        <Index open={open} onClose={handleClose} mapGroup={mapGroups[detailIndex]} reDraw={reDraw}/> : null}
     </List>
   );
 }

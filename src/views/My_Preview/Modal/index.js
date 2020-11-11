@@ -170,10 +170,7 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
       dispatch(isloading(false));
       return onComplete(false, 'Tmap 다중 경유지 생성 실패, 개발팀 문의 바랍니다.');
     }
-
-
   };
-
 
   const create_route = async () => {
     let url = "core/create_route_manual/"

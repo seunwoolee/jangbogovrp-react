@@ -14,6 +14,7 @@ import {
 } from '@material-ui/core';
 import getThousand from "../../../utils/getThousand";
 import OrdersDialog from "./Dialog";
+import DriverDialog from "../DriverDialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,9 +62,10 @@ export const getOrderPrice = (orders) => {
   return totalPrice;
 }
 
-function Index({open, onClose, className, mapGroup, moveTo}) {
+function Index({open, onClose, className, mapGroup, reDraw}) {
   const classes = useStyles();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [driverDialogOpen, setDriverDialogOpen] = useState(false);
   const [selectedOrders, setSelectedOrders] = useState(null);
 
   const handleClicked = (row) => {
@@ -73,6 +75,10 @@ function Index({open, onClose, className, mapGroup, moveTo}) {
 
   const handleClosed = () => {
     setDialogOpen(false);
+  }
+
+  const handleDriverClosed = () => {
+    setDriverDialogOpen(false);
   }
 
   return (
@@ -88,8 +94,13 @@ function Index({open, onClose, className, mapGroup, moveTo}) {
             <CardHeader
               classes={{root: classes.cardHeaderRoot, title: classes.cardHeaderTitle}}
               title="배송 내역"
+              action={(
+                <Button
+                  onClick={() => setDriverDialogOpen(true)}
+                  className={classes.cardHeaderTitle}>기사배정</Button>
+              )}
             />
-            <Divider/>
+            <Divider />
             <CardContent>
               <Grid
                 container
@@ -137,7 +148,11 @@ function Index({open, onClose, className, mapGroup, moveTo}) {
       </Modal>
 
       {dialogOpen ? <OrdersDialog open={dialogOpen} onClose={handleClosed} selectedOrders={selectedOrders} /> : null}
-
+      {driverDialogOpen ? <DriverDialog
+        reDraw={reDraw}
+        open={driverDialogOpen}
+        onClose={handleDriverClosed}
+        routeD={mapGroup.find(map => map.route_index === 1)} /> : null}
     </>
   );
 }
@@ -145,7 +160,7 @@ function Index({open, onClose, className, mapGroup, moveTo}) {
 Index.propTypes = {
   className: PropTypes.string,
   onClose: PropTypes.func,
-  moveTo: PropTypes.func,
+  reDraw: PropTypes.func,
   open: PropTypes.bool,
   mapGroup: PropTypes.array
 };
