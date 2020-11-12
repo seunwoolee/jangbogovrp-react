@@ -37,7 +37,6 @@ function DriverDialog({open, onClose, routeD, reDraw}) {
     const url = "company/get_drivers/";
     const config = {headers: {Authorization: `Token ${localStorage.getItem('token')}`}}
     const response = await axios.get(url, config);
-    console.log(response);
     const drivers = response.data.map(driver => {
       return {
         value: driver.id,

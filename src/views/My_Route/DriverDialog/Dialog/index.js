@@ -37,7 +37,7 @@ function DriverAddDialog({open, onClose, fetchDrivers}) {
   const classes = useStyles();
   const [name, setName] = useState('');
   const [courseNumber, setCourseNumber] = useState('');
-  const [company, setCompany] = useState('');
+  const [company, setCompany] = useState('0');
 
 
   const createDriver = async () => {
@@ -111,7 +111,7 @@ function DriverAddDialog({open, onClose, fetchDrivers}) {
               onChange={handleCompanyChanged}
             >
               {/*  TODO 하드 코딩*/}
-              <MenuItem value={''}>배송센터</MenuItem>
+              <MenuItem value={'0'}>배송센터</MenuItem>
               <MenuItem value={'011'}>반야월</MenuItem>
             </Select>
           </FormControl>
