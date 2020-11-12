@@ -27,13 +27,14 @@ const useStyles = makeStyles((theme) => ({
 
 function DriverAddDialog({open, onClose, fetchDrivers}) {
   const classes = useStyles();
-  const [name, setName] = useState(null);
+  const [name, setName] = useState('');
+  const [courseNumber, setCourseNumber] = useState('');
 
 
   const createDriver = async () => {
     const config = {headers: {Authorization: `Token ${localStorage.getItem('token')}`}};
     const url = "company/create_driver/";
-    const data = {name: name};
+    const data = {name: name, courseNumber: courseNumber};
     await axios.post(url, data, config);
   };
 
@@ -47,8 +48,12 @@ function DriverAddDialog({open, onClose, fetchDrivers}) {
     }
   }
 
-  const handleChanged = (event) => {
+  const handleNameChanged = (event) => {
     setName(event.target.value);
+  }
+
+  const handleCourseNumberChanged = (event) => {
+    setCourseNumber(event.target.value);
   }
 
   useEffect(() => {
@@ -69,12 +74,21 @@ function DriverAddDialog({open, onClose, fetchDrivers}) {
             배송 기사 추가
           </DialogContentText>
           <TextField
-            onChange={handleChanged}
+            onChange={handleNameChanged}
             value={name}
             autoFocus
             margin="normal"
             id="name"
             label="이름"
+            fullWidth
+          />
+          <TextField
+            type="number"
+            onChange={handleCourseNumberChanged}
+            value={courseNumber}
+            margin="normal"
+            id="name"
+            label="코스번호"
             fullWidth
           />
         </DialogContent>
