@@ -51,6 +51,9 @@ const useStyles = makeStyles((theme) => ({
   },
   tableRow: {
     cursor: "pointer"
+  },
+  minusPrice: {
+    color: "red"
   }
 }));
 
@@ -114,10 +117,10 @@ function Index({open, onClose, className, mapGroup, reDraw}) {
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell>경로순서</TableCell>
-                        <TableCell>주문자명</TableCell>
-                        <TableCell>주소</TableCell>
-                        <TableCell>금액</TableCell>
+                        <TableCell align="center">경로순서</TableCell>
+                        <TableCell align="center">주문자명</TableCell>
+                        <TableCell align="center">주소</TableCell>
+                        <TableCell align="center">금액</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -128,7 +131,10 @@ function Index({open, onClose, className, mapGroup, reDraw}) {
                             <TableCell align="center">{row.route_index}</TableCell>
                             <TableCell align="center">{row.customer_info.name}</TableCell>
                             <TableCell align="center">{row.customer_info.address}</TableCell>
-                            <TableCell align="center">{getThousand(getOrderPrice(row.orders))}원</TableCell>
+                            <TableCell align="center"
+                                       className={getOrderPrice(row.orders) < 0 ? classes.minusPrice : null}>
+                              {getThousand(getOrderPrice(row.orders))}원
+                            </TableCell>
                           </TableRow>
                         </Fragment>
                       ))}

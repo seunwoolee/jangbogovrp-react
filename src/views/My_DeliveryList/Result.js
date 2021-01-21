@@ -37,7 +37,6 @@ export default function Result({deliveries}) {
           <TableRow>
             <TableCell align="center" className={classes.boldTableCell}>날짜</TableCell>
             <TableCell align="center" className={classes.boldTableCell}>오전/오후</TableCell>
-            <TableCell align="center" className={classes.boldTableCell}>차량 대수</TableCell>
             <TableCell align="center" className={classes.boldTableCell}>배송 지점 수</TableCell>
             <TableCell align="center" className={classes.boldTableCell}>총 가격</TableCell>
           </TableRow>
@@ -49,8 +48,6 @@ export default function Result({deliveries}) {
               <TableRow component={RouterLink} to={"/route/" + delivery.id} className={classes.tableRows} hover>
                 <TableCell align="center">{delivery.date}</TableCell>
                 <TableCell align="center">{delivery.is_am ? '오전' : '오후'}</TableCell>
-                {/*<TableCell align="center">{(delivery.totalDistance / 1000).toFixed(1)}km</TableCell>*/}
-                <TableCell align="center">{delivery.count_car}</TableCell>
                 <TableCell align="center">{delivery.count_location}</TableCell>
                 <TableCell align="center">{getThousand(delivery.price)}원</TableCell>
               </TableRow>
