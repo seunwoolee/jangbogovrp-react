@@ -37,6 +37,7 @@ export default function Result({deliveries}) {
           <TableRow>
             <TableCell align="center" className={classes.boldTableCell}>날짜</TableCell>
             <TableCell align="center" className={classes.boldTableCell}>오전/오후</TableCell>
+
             <TableCell align="center" className={classes.boldTableCell}>배송 지점 수</TableCell>
             <TableCell align="center" className={classes.boldTableCell}>총 가격</TableCell>
           </TableRow>

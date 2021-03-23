@@ -63,7 +63,7 @@ export const routeColor = [
   "#000000",
   "#5F00FF",
   "#FF00DD",
-  "#FFFF6C",
+  "#282525", // TODO 노란색 -> 검은색
   "#FF5E00",
   "#A6A6A6",
   "#C4B73B",
@@ -74,6 +74,12 @@ export const routeColor = [
   "#FF9090", // 18
   "#4b7449", // 19
   "#ba4097", // 20
+  "#0e7b6a", // 21
+  "#620a99", // 22
+  "#2d480a", // 23
+  "#FF0000", // 24
+  "#1DDB16", // 25
+  // "#CC3F3E", // 25
 ];
 
 function MY_Tmap({fetchRoute, geoDatas, groupGeoDatas, groupMarkers, setGroupMarkers, groupLines, setGroupLines, map}) {
