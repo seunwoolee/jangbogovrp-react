@@ -84,6 +84,11 @@ export default [
         component: lazy(() => import('src/views/My_DeliveryList'))
       },
       {
+        path: '/locationList',
+        exact: true,
+        component: lazy(() => import('src/views/My_LocationList'))
+      },
+      {
         path: '/reportApproved',
         exact: true,
         component: lazy(() => import('src/views/My_ReportWritten'))
