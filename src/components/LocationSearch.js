@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import koLocale from "date-fns/locale/ko";
 import DateFnsUtils from "@date-io/date-fns";
 import clsx from 'clsx';
@@ -35,12 +35,18 @@ const useStyles = makeStyles((theme) => ({
   },
   searchButton: {
     backgroundColor: theme.palette.common.white,
-    marginLeft: theme.spacing(2)
+    marginLeft: theme.spacing(1)
+  },
+  resetButton: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+    marginLeft: theme.spacing(1)
   }
 }));
 
 function LocationSearch({productCode, setProductCode, onSearch}) {
   const classes = useStyles();
+  const inputRef = useRef();
 
   const handleChange = (event) => {
     setProductCode(event.target.value);
@@ -52,10 +58,16 @@ function LocationSearch({productCode, setProductCode, onSearch}) {
     }
   };
 
+  const handleResetClick = () => {
+    setProductCode('');
+    inputRef.current.focus();
+  };
+
   return (
     <>
       <div className={classes.fieldGroup}>
         <TextField
+          inputRef={inputRef}
           value={productCode}
           onChange={handleChange}
           className={classes.dateField}
@@ -63,14 +75,23 @@ function LocationSearch({productCode, setProductCode, onSearch}) {
           label="상품코드"
           name="productCode"
           variant="outlined"
+          autoFocus
         />
         <Button
           className={classes.searchButton}
           onClick={onSearch}
-          size="large"
+          size="medium"
           variant="contained"
         >
           검색
+        </Button>
+        <Button
+          className={classes.resetButton}
+          onClick={handleResetClick}
+          size="medium"
+          variant="contained"
+        >
+          Reset
         </Button>
       </div>
     </>
