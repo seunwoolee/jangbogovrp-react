@@ -83,7 +83,7 @@ function Preview() {
       title="배송지역 미리보기"
     >
 
-      <LoadingBar/>
+      <LoadingBar />
 
       <Container
         maxWidth={false}
@@ -97,11 +97,16 @@ function Preview() {
         <Grid container spacing={1}>
           <Grid item xs={12} lg={9}>
             {/* eslint-disable-next-line react/jsx-pascal-case */}
-            <MY_Tmap fetchOrderData={fetchOrderData} orders={orderData} map={map} markers={markers}
-                     setMarkers={setMarkers}/>
+            <MY_Tmap
+              fetchOrderData={fetchOrderData}
+              orders={orderData}
+              map={map}
+              markers={markers}
+              setMarkers={setMarkers}
+            />
           </Grid>
           <Grid item xs={12} lg={3}>
-            <Result orders={orderData} fetchOrderData={fetchOrderData} map={map} isAm={isAm} setIsAm={setIsAm}/>
+            <Result orders={orderData} fetchOrderData={fetchOrderData} map={map} isAm={isAm} setIsAm={setIsAm} />
           </Grid>
         </Grid>
       </Container>
