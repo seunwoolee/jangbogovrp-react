@@ -89,7 +89,7 @@ function MY_Tmap({fetchOrderData, orders, map, markers, setMarkers}) {
       <div className={classes.root} id="myTmap"/>
       {order !== null ? (
         <DialogIndex fetchOrderData={fetchOrderData} onClose={handleClose} open={open} order={order} geoDatas={[]}
-                     maxRouteNumber={20}/>  // TODO 하드코딩
+                     maxRouteNumber={25}/>  // TODO 하드코딩
       ) : null}
     </>
   );

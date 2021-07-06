@@ -65,7 +65,7 @@ function MY_Route() {
     dispatch(isloading(false));
 
     // const maxRouteNumber = Math.max(...response.data.route_d.map(d => d.route_number));
-    const newMapGroups = createGroupMaps(20, response.data.route_d); // TODO 하드코딩
+    const newMapGroups = createGroupMaps(25, response.data.route_d); // TODO 하드코딩
     setGeoDatas(response.data.route_d);
     setMapGroups(newMapGroups);
 

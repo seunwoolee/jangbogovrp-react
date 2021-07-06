@@ -20,11 +20,11 @@ export function MY_navConfig() {
           href: '/deliveryList',
           icon: RestorePageOutlinedIcon,
         },
-        {
-          title: '로케이션조회',
-          href: '/locationList',
-          icon: RestorePageOutlinedIcon,
-        },
+        // {
+        //   title: '로케이션조회',
+        //   href: '/locationList',
+        //   icon: RestorePageOutlinedIcon,
+        // },
       ]
     },
     // {

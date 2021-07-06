@@ -53,18 +53,44 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
+function DialogIndex({
+  fetchRoute, open, onClose, geoDatas, maxRouteNumber
+}) {
   const classes = useStyles();
   const [newRouteNumber, setNewRouteNumber] = useState(1);
   const [routeNumbers, setRouteNumbers] = useState([]);
   const [add, setAdd] = useState(0);
 
+  const changeCourseNumber = async () => {
+    // debugger;
+    const config = {headers: {Authorization: `Token ${localStorage.getItem('token')}`}};
+    const url = "customer/update_course_number/";
+
+    // if (geoDatas.length === 1) {
+    //   const data = {
+    //     guest_id: geoDatas[0].customer_info.customer_id.split("_")[0],
+    //     to_course_number: newRouteNumber,
+    //   };
+    //   return await axios.patch(url, data, config);
+    // }
+
+    for (let i = 0; i < geoDatas.length; i++) {
+      const data = {
+        guest_id: geoDatas[i].customer_info.customer_id.split("_")[0],
+        to_course_number: newRouteNumber,
+      };
+      axios.patch(url, data, config);
+    }
+  };
+
   const handleSubmit = async () => {
+    changeCourseNumber();
     try {
       await changeRouteNumber();
     } catch (e) {
       alert('현재 경로와 변경될 경로가 같습니다');
     }
+
     onClose();
     fetchRoute();
   };
@@ -177,7 +203,7 @@ function DialogIndex({fetchRoute, open, onClose, geoDatas, maxRouteNumber}) {
                     <FormControlLabel
                       key={i + 1}
                       value={i + 1}
-                      control={<Radio/>}
+                      control={<Radio />}
                       label={(
                         <Avatar
                           classes={{img: classes.avatar}}

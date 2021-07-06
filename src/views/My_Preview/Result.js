@@ -57,17 +57,23 @@ export default function Result({orders, fetchOrderData, map, isAm, setIsAm}) {
       try {
         response = await axios.get(url, config);
         const customers = response.data;
+
         for (let i = 0; i < customers.length; i++) {
-          const tmapResponse = await getGeolocationByTmap(customers[i]);
-          const coordinateInfo = tmapResponse.data.coordinateInfo;
-          const coordinate = coordinateInfo.coordinate[0];
-          let lat = coordinate.lat;
-          let lon = coordinate.lon;
-          if (lat === "" && lon === "") {
-            lat = coordinate.newLat;
-            lon = coordinate.newLon;
+          try {
+            const tmapResponse = await getGeolocationByTmap(customers[i]);
+            const coordinateInfo = tmapResponse.data.coordinateInfo;
+            const coordinate = coordinateInfo.coordinate[0];
+            let lat = coordinate.lat;
+            let lon = coordinate.lon;
+            if (lat === "" && lon === "") {
+              lat = coordinate.newLat;
+              lon = coordinate.newLon;
+            }
+            saveToErp(customers[i].orderNumber, lat, lon);
+          } catch (e) {
+            console.log(customers[i]);
           }
-          saveToErp(customers[i].orderNumber, lat, lon);
+
         }
         fetchOrderData();
       } catch (e) {

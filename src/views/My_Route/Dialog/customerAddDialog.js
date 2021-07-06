@@ -128,7 +128,7 @@ function CustomerAddDialog({fetchRoute, open, onClose, routeM}) {
   }, [open]);
 
   const routeNumbers = [];
-  for (let i = 0; i < 20; i++) { // TODO 하드코딩
+  for (let i = 0; i < 25; i++) { // TODO 하드코딩
     routeNumbers.push(i);
   }
 

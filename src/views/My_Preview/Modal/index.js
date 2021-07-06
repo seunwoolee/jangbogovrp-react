@@ -178,6 +178,7 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
       url = "core/create_route/";
     }
 
+    // const data = {deliveryDate: today, carCount: carCount, isAm: isAm};
     const data = {deliveryDate: today, carCount: carCount, isAm: isAm};
     return await axios.post(url, data, config)
   }

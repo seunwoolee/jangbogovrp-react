@@ -61,7 +61,7 @@ function MY_Print() {
   };
 
   useEffect(() => {
-    fetchRoute().then(setTimeout(() => window.print(), 2500));
+    fetchRoute().then(setTimeout(() => window.print(), 6500));
   }, []);
 
   const tableRows = (geoData) => {
