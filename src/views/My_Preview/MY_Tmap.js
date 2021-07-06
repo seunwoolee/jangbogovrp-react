@@ -22,16 +22,16 @@ function MY_Tmap({
   const [popups, setPopups] = useState([]);
   const session = useSelector((state) => state.session);
   const _address = {
-    0: "9",
-    1: "8",
-    2: "7",
-    3: "6",
-    4: "5",
-    5: "4",
-    6: "3",
-    7: "2",
-    8: "1",
-    9: "0",
+    0: "99",
+    1: "33",
+    2: "44",
+    3: "55",
+    4: "66",
+    5: "77",
+    6: "88",
+    7: "22",
+    8: "11",
+    9: "33",
   };
 
   const handleClickOpen = () => {
@@ -75,18 +75,29 @@ function MY_Tmap({
   };
 
   const drawMarker = (order, orderIndex, _popups, _duplicateAddress) => {
-    let {lat} = order;
+    const {lat} = order;
     let {lon} = order;
-    for (let i = 0; i < _duplicateAddress.length; i++) {
-      if (_duplicateAddress[i][0] === order.lat && _duplicateAddress[i][1] === order.lon) {
-        lat = lat.substring(0, lat.length - 2);
-        lat = lat.concat(_address[lat.slice(-1)]);
 
-        lon = lon.substring(0, lon.length - 2);
-        lon = lon.concat(_address[lon.slice(-1)]);
-        break;
+    const duplicateAddresses = _duplicateAddress.filter(address => address[0] === order.lat && address[1] === order.lon);
+
+    for (let i = 0; i < duplicateAddresses.length; i++) {
+      const duplicateAddress = duplicateAddresses[i];
+      let lastLon = duplicateAddress[1].substr(duplicateAddress[1].length - 2, 1);
+
+      if (i >= 1) {
+        lastLon = lon.substr(lon.length - 2, 1);
       }
+
+      lon = lon.substring(0, lon.length - 2);
+      lon = lon.concat(_address[lastLon]);
     }
+
+    // if (duplicateAddresses.length > 0) {
+    //   const duplicateAddress = duplicateAddresses[duplicateAddresses.length - 1];
+    //   const lastLon = duplicateAddress[1].substr(duplicateAddress[1].length - 2, 1);
+    //   lon = lon.substring(0, lon.length - 2);
+    //   lon = lon.concat(_address[lastLon]);
+    // }
 
     if (order.lat !== null) {
       _duplicateAddress.push([order.lat, order.lon]);
