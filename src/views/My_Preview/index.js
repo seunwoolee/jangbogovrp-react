@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect} from 'react';
 import {makeStyles} from '@material-ui/styles';
 import {Container} from '@material-ui/core';
 import Page from 'src/components/Page';
 import {useDispatch, useSelector} from "react-redux";
-import {useHistory, useLocation} from "react-router";
+import {useHistory} from "react-router";
 import Grid from "@material-ui/core/Grid";
 import moment from "moment";
 import axios from "../../utils/my_axios";
@@ -31,6 +31,7 @@ function Preview() {
   const session = useSelector((state) => state.session);
   const [orderData, setOrderData] = useState([]);
   const [markers, setMarkers] = useState([]);
+  const [selectedMarkers, setSelectedMarkers] = useState([]);
   const [map, setMap] = useState(null);
   const [isAm, setIsAm] = useState(true);
   const [openModal, setOpenModal] = useState(false);
@@ -83,7 +84,7 @@ function Preview() {
       title="배송지역 미리보기"
     >
 
-      <LoadingBar />
+      <LoadingBar/>
 
       <Container
         maxWidth={false}
@@ -93,6 +94,8 @@ function Preview() {
           isAm={isAm}
           openModal={openModal}
           setOpenModal={setOpenModal}
+          selectedMarkers={selectedMarkers}
+          setSelectedMarkers={setSelectedMarkers}
         />
         <Grid container spacing={1}>
           <Grid item xs={12} lg={9}>
@@ -103,10 +106,12 @@ function Preview() {
               map={map}
               markers={markers}
               setMarkers={setMarkers}
+              selectedMarkers={selectedMarkers}
+              setSelectedMarkers={setSelectedMarkers}
             />
           </Grid>
           <Grid item xs={12} lg={3}>
-            <Result orders={orderData} fetchOrderData={fetchOrderData} map={map} isAm={isAm} setIsAm={setIsAm} />
+            <Result orders={orderData} fetchOrderData={fetchOrderData} map={map} isAm={isAm} setIsAm={setIsAm}/>
           </Grid>
         </Grid>
       </Container>

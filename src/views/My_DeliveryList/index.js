@@ -4,14 +4,14 @@ import {Container} from '@material-ui/core';
 import Page from 'src/components/Page';
 import {useDispatch, useSelector} from "react-redux";
 import {useHistory, useLocation} from "react-router";
+import Grid from "@material-ui/core/Grid";
+import moment from "moment";
 import axios from "../../utils/my_axios";
 
 import Header from './Header';
 import {isloading} from "../../actions";
 import MY_Tmap from "../../components/MY_Tmap";
-import Grid from "@material-ui/core/Grid";
 import LoadingBar from "../../components/MY_LoadingBar";
-import moment from "moment";
 import Result from "./Result";
 import MY_SearchBar from "../../components/MY_DeliverySearchBar";
 
@@ -44,10 +44,10 @@ function DeliveryList() {
     const config = {
       headers: {Authorization: `Token ${localStorage.getItem('token')}`},
       params: {
-      startDate: moment(inputDateValues.startDate).format('YYYY-MM-DD'),
-      endDate: moment(inputDateValues.endDate).format('YYYY-MM-DD'),
-      isAm: isAm
-    }
+        startDate: moment(inputDateValues.startDate).format('YYYY-MM-DD'),
+        endDate: moment(inputDateValues.endDate).format('YYYY-MM-DD'),
+        isAm
+      }
     };
 
     dispatch(isloading(true));
@@ -79,10 +79,10 @@ function DeliveryList() {
         className={classes.container}
       >
         <Header />
-        <MY_SearchBar dateValues={inputDateValues} setDateValues={setInputDateValues} onSearch={fetchOrderData}/>
+        <MY_SearchBar dateValues={inputDateValues} setDateValues={setInputDateValues} onSearch={fetchOrderData} />
         <Grid container spacing={3}>
           <Grid item xs={12} lg={12}>
-            <Result deliveries={deliveryData} />
+            <Result deliveries={deliveryData} fetchOrderData={fetchOrderData} />
           </Grid>
         </Grid>
       </Container>

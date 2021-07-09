@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function MY_Tmap({
-  fetchOrderData, orders, map, markers, setMarkers
+  fetchOrderData, orders, map, markers, setMarkers, selectedMarkers, setSelectedMarkers
 }) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
@@ -48,29 +48,22 @@ function MY_Tmap({
       handleClickOpen();
     });
 
+    if (order.done === 1) {
+      return;
+    }
+
     marker.addListener('contextmenu', (evt) => {
       if (!marker.isSelected) {
-        const htmlIcon = createHtmlicon(0, 0);
+        const htmlIcon = createHtmlicon(0, '★');
         marker.isSelected = true;
         marker.setIconHTML(htmlIcon);
+        setSelectedMarkers(prevState => [...prevState, marker]);
       } else {
         const htmlIcon = createHtmlicon(marker.courseNumber, marker.orderIndex);
         marker.isSelected = false;
         marker.setIconHTML(htmlIcon);
+        setSelectedMarkers(prevState => prevState.filter(currentMarker => currentMarker.orderIndex !== marker.orderIndex));
       }
-
-      // const htmlIcon = createHtmlicon(courseNumber, orderIndex);
-      //
-      // if (marker._htmlElementBack === undefined || marker._htmlElementBack === null) {
-      //   marker._htmlElementBack = marker._htmlElement;
-      //   marker.setIconHTML("<div>ddd</div>");
-      // } else {
-      //   marker.setIconHTML(marker._htmlElementBack);
-      //   marker._htmlElementBack = null;
-      // }
-
-      // setOrder(order);
-      // handleClickOpen();
     });
   };
 
@@ -92,13 +85,6 @@ function MY_Tmap({
       lon = lon.concat(_address[lastLon]);
     }
 
-    // if (duplicateAddresses.length > 0) {
-    //   const duplicateAddress = duplicateAddresses[duplicateAddresses.length - 1];
-    //   const lastLon = duplicateAddress[1].substr(duplicateAddress[1].length - 2, 1);
-    //   lon = lon.substring(0, lon.length - 2);
-    //   lon = lon.concat(_address[lastLon]);
-    // }
-
     if (order.lat !== null) {
       _duplicateAddress.push([order.lat, order.lon]);
     }
@@ -117,7 +103,11 @@ function MY_Tmap({
       courseNumber = 999;
     }
 
-    const htmlIcon = createHtmlicon(courseNumber, orderIndex);
+    let htmlIcon = createHtmlicon(courseNumber, orderIndex);
+    if (order.done === 1) {
+      htmlIcon = createHtmlicon(0, orderIndex);
+    }
+
     const marker = new window.Tmapv2.Marker({
       iconHTML: htmlIcon,
       iconSize: new window.Tmapv2.Size(26, 38),
@@ -128,6 +118,7 @@ function MY_Tmap({
     marker.courseNumber = courseNumber;
     marker.orderIndex = orderIndex;
     marker.isSelected = false;
+    marker.orderNumber = order.orderNumber;
     onMakerClicked(marker, order);
 
     return marker;
@@ -173,8 +164,10 @@ MY_Tmap.propTypes = {
   fetchOrderData: PropTypes.func,
   orders: PropTypes.array,
   markers: PropTypes.array,
+  selectedMarkers: PropTypes.array,
   map: PropTypes.object,
   setMarkers: PropTypes.func,
+  setSelectedMarkers: PropTypes.func,
 };
 
 export default MY_Tmap;

@@ -9,14 +9,14 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import PropTypes from "prop-types";
 import moment from "moment";
 import {makeStyles} from "@material-ui/styles";
-import axios from "../../../utils/my_axios";
-import {getTodoCount, isloading} from "../../../actions";
-import {APIKEY} from "../../../my_config";
 import globalAxios from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import {useHistory} from "react-router";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
+import {APIKEY} from "../../../my_config";
+import {getTodoCount, isloading} from "../../../actions";
+import axios from "../../../utils/my_axios";
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -35,21 +35,20 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-
 export const create_routeOrder = async (routeM: number, routeNumber: number, startLat: number, startLon: number) => {
   const url = "delivery/routeD/";
-  let params = {routeM: routeM, routeNumber: routeNumber};
+  let params = {routeM, routeNumber};
   let response = null;
   const config = {
     headers: {Authorization: `Token ${localStorage.getItem('token')}`},
-    params: params
+    params
   };
 
   response = await axios.get(url, config);
   const rows = response.data;
 
   if (rows.length === 0) {
-    return
+    return;
   }
 
   const viaPoints = [];
@@ -64,7 +63,7 @@ export const create_routeOrder = async (routeM: number, routeNumber: number, sta
 
   let tmapRouteNumber = '20';
   if (viaPoints.length > 20) {
-    tmapRouteNumber = '30'
+    tmapRouteNumber = '30';
   }
 
   params = {
@@ -78,8 +77,8 @@ export const create_routeOrder = async (routeM: number, routeNumber: number, sta
     endX: String(startLon),
     endY: String(startLat),
     searchOption: "0",
-    viaPoints: viaPoints,
-  }
+    viaPoints,
+  };
 
   try {
     response = await globalAxios.post(
@@ -91,13 +90,13 @@ export const create_routeOrder = async (routeM: number, routeNumber: number, sta
     const resultFeatures = response.data.features;
     const newRouteOrders = [];
     const jsonData = JSON.stringify(resultFeatures); // index가 0인 첫번째에 들어감
-    for (let i in resultFeatures) {
-      let geometry = resultFeatures[i].geometry;
-      let properties = resultFeatures[i].properties;
+    for (const i in resultFeatures) {
+      const {geometry} = resultFeatures[i];
+      const {properties} = resultFeatures[i];
 
       if (geometry.type === "Point") {
         if (properties.viaPointId) {
-          const temp = {routeM: routeM, customerId: properties.viaPointId, index: properties.index};
+          const temp = {routeM, customerId: properties.viaPointId, index: properties.index};
           if (properties.index === "1") {
             temp.jsonData = jsonData;
             temp.totalDistance = response.data.properties.totalDistance;
@@ -108,16 +107,25 @@ export const create_routeOrder = async (routeM: number, routeNumber: number, sta
     }
 
     await axios.patch("delivery/routeDUpdate/",
-      newRouteOrders, {headers: {Authorization: `Token ${localStorage.getItem('token')}`}})
-
+      newRouteOrders, {headers: {Authorization: `Token ${localStorage.getItem('token')}`}});
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
 
   return routeNumber;
-}
+};
 
-function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess, setInfo}) {
+function Modal({
+  isAm,
+  open,
+  onClose,
+  onComplete,
+  setSnackbarsOpen,
+  setIsSuccess,
+  setInfo,
+  selectedMarkers,
+  setSelectedMarkers
+}) {
   const today = moment().format('YYYY-MM-DD');
   const [carCount, setCarCount] = useState('');
   const [isAutoChecked, setIsAutoChecked] = useState(false);
@@ -131,7 +139,7 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
 
   const handleChecked = () => {
     setIsAutoChecked(prev => !prev);
-  }
+  };
 
   const onSubmit = async () => {
     dispatch(isloading(true));
@@ -160,9 +168,7 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
         create_routeOrder(routeMId, i, Number(session.user.latitude), Number(session.user.longitude))
           .then(r => {
             if (r === maxRouteNumber) {
-              setTimeout(() => {
-                return history.push('/route/' + String(routeMId));
-              }, 1000)
+              setTimeout(() => history.push(`/route/${String(routeMId)}`), 1000);
             }
           });
       }
@@ -173,22 +179,20 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
   };
 
   const create_route = async () => {
-    let url = "core/create_route_manual/"
+    let url = "core/create_route_manual/";
     if (isAutoChecked === true) {
       url = "core/create_route/";
     }
 
-    // const data = {deliveryDate: today, carCount: carCount, isAm: isAm};
-    const data = {deliveryDate: today, carCount: carCount, isAm: isAm};
-    return await axios.post(url, data, config)
-  }
+    const data = {deliveryDate: today, carCount, isAm, selectedMarkers: selectedMarkers.map(marker => marker.orderNumber)};
+    return await axios.post(url, data, config);
+  };
 
   const create_customer = async () => {
     const url = "customer/create_customers/";
-    const data = {isAm: isAm, isAuto: isAutoChecked};
+    const data = {isAm, isAuto: isAutoChecked, selectedMarkers: selectedMarkers.map(marker => marker.orderNumber)};
     return await axios.post(url, data, config);
-  }
-
+  };
 
   return (
     <div>
@@ -198,11 +202,25 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            <FormControlLabel onChange={handleChecked} checked={isAutoChecked} control={<Switch/>} label="자동배차"/>
+            <FormControlLabel onChange={handleChecked} checked={isAutoChecked} control={<Switch />} label="자동배차" />
           </DialogContentText>
-          <DialogContentText className={classes.content}>
-            {today} {isAm ? '오전' : '오후'} 배차를 시작 하시겠습니까?
-          </DialogContentText>
+          {selectedMarkers.length === 0 ? (
+            <DialogContentText className={classes.content}>
+              {today}
+              {' '}
+              {isAm ? '오전' : '오후'}
+              {' '}
+              배차를 시작 하시겠습니까?
+            </DialogContentText>
+          ) : (
+            <DialogContentText className={classes.content}>
+              {today}
+              {' '}
+              {`${selectedMarkers.length}개의 선택 `}
+              {' '}
+              배차를 시작 하시겠습니까?
+            </DialogContentText>
+          )}
           {isAutoChecked ? (
             <TextField
               onChange={(event) => setCarCount(event.target.value)}
@@ -217,10 +235,10 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
           ) : null}
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} color="default" variant={"outlined"}>
+          <Button onClick={onClose} color="default" variant="outlined">
             닫기
           </Button>
-          <Button onClick={onSubmit} color="secondary" variant={"outlined"}>
+          <Button onClick={onSubmit} color="secondary" variant="outlined">
             확인
           </Button>
         </DialogActions>
@@ -232,7 +250,9 @@ function Modal({isAm, open, onClose, onComplete, setSnackbarsOpen, setIsSuccess,
 Modal.propTypes = {
   isAm: PropTypes.bool,
   openModal: PropTypes.bool,
-  setOpenModal: PropTypes.func
+  setOpenModal: PropTypes.func,
+  selectedMarkers: PropTypes.array,
+  setSelectedMarkers: PropTypes.func,
 };
 
 export default Modal;

@@ -12,7 +12,7 @@ const useStyles = makeStyles(() => ({
   root: {}
 }));
 
-function Header({isAm, openModal, setOpenModal}) {
+function Header({isAm, openModal, setOpenModal, selectedMarkers, setSelectedMarkers}) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(true);
   const [info, setInfo] = useState("완료");
@@ -35,7 +35,7 @@ function Header({isAm, openModal, setOpenModal}) {
       setInfo(info);
     }
     setSnackbarOpen(true);
-  }
+  };
 
   return (
     <div
@@ -80,6 +80,8 @@ function Header({isAm, openModal, setOpenModal}) {
           setSnackbarsOpen={setSnackbarOpen}
           setIsSuccess={setIsSuccess}
           setInfo={setInfo}
+          selectedMarkers={selectedMarkers}
+          setSelectedMarkers={setSelectedMarkers}
         />
       ) : null}
 
@@ -99,7 +101,9 @@ function Header({isAm, openModal, setOpenModal}) {
 Header.propTypes = {
   isAm: PropTypes.bool,
   openModal: PropTypes.bool,
-  setOpenModal: PropTypes.func
+  setOpenModal: PropTypes.func,
+  selectedMarkers: PropTypes.array,
+  setSelectedMarkers: PropTypes.func,
 };
 
 export default Header;
