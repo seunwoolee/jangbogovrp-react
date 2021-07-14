@@ -46,6 +46,8 @@ function MY_Print() {
   const [geoDatas, setGeoDatas] = useState([]);
   const [mapGroups, setMapGroups] = useState([[]]);
 
+  console.log(geoDatas, mapGroups)
+
   const fetchRoute = async () => {
     const routeM = params.get('routeM');
     const config = {
@@ -73,7 +75,7 @@ function MY_Print() {
           <TableCell size={"small"} align="center">{geoData.route_index}</TableCell>
           <TableCell size={"small"} align="center">{geoData.customer_info.name}</TableCell>
           <TableCell size={"small"} align="center">{geoData.customer_info.address}</TableCell>
-          <TableCell size={"small"} align="center" className={classes.tableCellContent} >0원</TableCell>
+          <TableCell size={"small"} align="center" className={classes.tableCellContent}>0원</TableCell>
         </TableRow>
       ));
 
@@ -120,7 +122,9 @@ function MY_Print() {
           {mapGroups.map((mapGroup, index) => (
             mapGroup.length > 0 ? (
               <TableContainer key={index} className={classes.tableContainer} component={Paper}>
-                <Typography variant="h3" component="h4">{index + 1}번  {mapGroup[0].driver ? mapGroup[0].driver.name : ''}</Typography>
+                <Typography variant="h3" component="h4">
+                  {index + 1}번 {mapGroup[0].driver ? mapGroup[0].driver.name : ''} / {geoDatas[0].orders[0].is_am ? '오전' : '오후'}
+                </Typography>
                 <Table>
                   <TableHead className={classes.tableHead}>
                     <TableRow className={classes.tableRow}>
@@ -136,6 +140,12 @@ function MY_Print() {
                         {tableRows(row).map(content => content)}
                       </Fragment>
                     ))}
+                    <TableRow className={classes.tableRow}>
+                      <TableCell size={"medium"} align="center">출발</TableCell>
+                      <TableCell size={"small"} align="center"> </TableCell>
+                      <TableCell size={"medium"} align="center">도착</TableCell>
+                      <TableCell className={classes.tableCellContent} size={"small"} align="center"> </TableCell>
+                    </TableRow>
                     {getGroupPrice(mapGroup)}
                   </TableBody>
                 </Table>
